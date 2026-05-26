@@ -411,6 +411,7 @@
     "noSessions": "Todavía no hay sesiones.",
     "showMore": "Mostrar {{count}} más",
     "showAll": "Mostrar todo",
+    "collapsed": "{{count}} plegados",
     "showLess": "Mostrar menos",
     "actions": "Acciones del chat {{title}}",
     "activity": {

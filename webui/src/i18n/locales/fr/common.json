@@ -411,6 +411,7 @@
     "noSessions": "Aucune session pour le moment.",
     "showMore": "Afficher {{count}} de plus",
     "showAll": "Tout afficher",
+    "collapsed": "{{count}} masquées",
     "showLess": "Afficher moins",
     "actions": "Actions de la discussion {{title}}",
     "activity": {

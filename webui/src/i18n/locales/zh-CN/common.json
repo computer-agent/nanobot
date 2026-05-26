@@ -411,6 +411,7 @@
     "noSessions": "还没有会话。",
     "showMore": "再显示 {{count}} 个",
     "showAll": "显示全部",
+    "collapsed": "已折叠 {{count}} 个",
     "showLess": "收起",
     "actions": "“{{title}}” 的会话操作",
     "activity": {

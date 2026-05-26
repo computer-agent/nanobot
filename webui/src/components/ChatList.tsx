@@ -178,180 +178,187 @@ export const ChatList = memo(function ChatList({
   return (
     <div className="h-full min-h-0 min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain scrollbar-thin scrollbar-track-transparent">
       <div className="min-w-0 space-y-3 px-2 py-1.5">
-        {limitedGroups.map((group, index) => (
-          <section key={group.id} aria-label={group.label}>
-            {group.kind === "project"
-              && limitedGroups[index - 1]?.kind !== "project" ? (
-                <div className="px-2 pb-1 text-[12px] font-medium text-muted-foreground/65">
-                  {labels.projects}
-                </div>
-              ) : null}
-            {group.kind === "project" ? (
-              <ProjectGroupHeader
-                label={group.label}
-                path={group.projectPath}
-                collapsed={Boolean(collapsedGroups[group.id])}
-                onToggle={() => onToggleGroup?.(group.id)}
-                onRequestRename={
-                  group.projectKey && onRequestRenameProject
-                    ? () => onRequestRenameProject(group.projectKey ?? "", group.label)
-                    : undefined
-                }
-                actionMenuPortalContainer={actionMenuPortalContainer}
-                updatedAt={showTimestamps ? group.updatedAt : null}
-              />
-            ) : isFoldableChatsGroup(group) ? (
-              <ChatsGroupHeader
-                label={group.label}
-                folded={isFoldedChatsGroup(group, collapsedGroups)}
-                totalCount={group.sessions.length}
-                visibleCount={
-                  visibleSessionsForGroup(group, activeKey, collapsedGroups).length
-                }
-                onToggle={() => onToggleGroup?.(group.id)}
-              />
-            ) : (
-              <div className="px-2 pb-1 text-[12px] font-medium text-muted-foreground/65">
-                {group.label}
-              </div>
-            )}
-            {group.kind === "project" && collapsedGroups[group.id] ? null : (
-              <ul className="space-y-0.5">
-                {visibleSessionsForGroup(group, activeKey, collapsedGroups).map((s) => {
-                  const active = s.key === activeKey;
-                  const fallbackTitle = t("chat.fallbackTitle", {
-                    id: s.chatId.slice(0, 6),
-                  });
-                  const generatedTitle = s.title?.trim() || "";
-                  const title = displayTitle(s, titleOverrides, t("chat.newChat"));
-                  const tooltipTitle =
-                    titleOverrides[s.key]?.trim() ||
-                    generatedTitle ||
-                    deriveTitle(s.preview, fallbackTitle);
-                  const isPinned = pinned.has(s.key);
-                  const isArchived = archived.has(s.key);
-                  const preview = s.preview.trim();
-                  const showPreview = showPreviews && preview && preview !== title;
-                  const timestamp = showTimestamps
-                    ? relativeTime(s.updatedAt ?? s.createdAt)
-                    : "";
-                  const projectMode = group.kind === "project";
-                  const activityState = running.has(s.chatId)
-                    ? "running"
-                    : completed.has(s.chatId) && !active
-                      ? "complete"
-                      : null;
-                  return (
-                    <li key={s.key} className="min-w-0">
-                      <div
-                        className={cn(
-                          "group flex min-w-0 max-w-full items-center gap-2 rounded-xl px-2 text-[13px] transition-colors",
-                          compact ? "min-h-7" : "min-h-8",
-                          active
-                            ? "bg-sidebar-accent/70 text-sidebar-accent-foreground shadow-[inset_0_0_0_1px_hsl(var(--sidebar-border)/0.28)]"
-                            : "text-sidebar-foreground/82 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
-                        )}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => onSelect(s.key)}
-                          title={tooltipTitle}
+        {limitedGroups.map((group, index) => {
+          const foldableChatsGroup = isFoldableChatsGroup(group);
+          const foldedChatsGroup = isFoldedChatsGroup(group, collapsedGroups);
+          const visibleSessions = visibleSessionsForGroup(
+            group,
+            activeKey,
+            collapsedGroups,
+          );
+          const hiddenInGroup = Math.max(0, group.sessions.length - visibleSessions.length);
+          const canToggleFold = group.sessions.length > COLLAPSED_CHATS_VISIBLE_COUNT;
+
+          return (
+            <section key={group.id} aria-label={group.label}>
+              {group.kind === "project"
+                && limitedGroups[index - 1]?.kind !== "project" ? (
+                  <div className="px-2 pb-1 text-[12px] font-medium text-muted-foreground/65">
+                    {labels.projects}
+                  </div>
+                ) : null}
+              {group.kind === "project" ? (
+                <ProjectGroupHeader
+                  label={group.label}
+                  path={group.projectPath}
+                  collapsed={Boolean(collapsedGroups[group.id])}
+                  onToggle={() => onToggleGroup?.(group.id)}
+                  onRequestRename={
+                    group.projectKey && onRequestRenameProject
+                      ? () => onRequestRenameProject(group.projectKey ?? "", group.label)
+                      : undefined
+                  }
+                  actionMenuPortalContainer={actionMenuPortalContainer}
+                  updatedAt={showTimestamps ? group.updatedAt : null}
+                />
+              ) : (
+                <ChatsGroupHeader label={group.label} />
+              )}
+              {group.kind === "project" && collapsedGroups[group.id] ? null : (
+                <ul className="space-y-0.5">
+                  {visibleSessions.map((s) => {
+                    const active = s.key === activeKey;
+                    const fallbackTitle = t("chat.fallbackTitle", {
+                      id: s.chatId.slice(0, 6),
+                    });
+                    const generatedTitle = s.title?.trim() || "";
+                    const title = displayTitle(s, titleOverrides, t("chat.newChat"));
+                    const tooltipTitle =
+                      titleOverrides[s.key]?.trim() ||
+                      generatedTitle ||
+                      deriveTitle(s.preview, fallbackTitle);
+                    const isPinned = pinned.has(s.key);
+                    const isArchived = archived.has(s.key);
+                    const preview = s.preview.trim();
+                    const showPreview = showPreviews && preview && preview !== title;
+                    const timestamp = showTimestamps
+                      ? relativeTime(s.updatedAt ?? s.createdAt)
+                      : "";
+                    const projectMode = group.kind === "project";
+                    const activityState = running.has(s.chatId)
+                      ? "running"
+                      : completed.has(s.chatId) && !active
+                        ? "complete"
+                        : null;
+                    return (
+                      <li key={s.key} className="min-w-0">
+                        <div
                           className={cn(
-                            "min-w-0 flex-1 overflow-hidden text-left",
-                            compact ? "py-1" : "py-1.5",
-                            projectMode && "pl-7",
+                            "group flex min-w-0 max-w-full items-center gap-2 rounded-xl px-2 text-[13px] transition-colors",
+                            compact ? "min-h-7" : "min-h-8",
+                            active
+                              ? "bg-sidebar-accent/70 text-sidebar-accent-foreground shadow-[inset_0_0_0_1px_hsl(var(--sidebar-border)/0.28)]"
+                              : "text-sidebar-foreground/82 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
                           )}
                         >
-                          {projectMode ? (
-                          <span className="flex w-full min-w-0 items-baseline gap-2">
-                            <span className="min-w-0 flex-1 truncate font-medium leading-5">
-                              {title}
-                            </span>
-                            {timestamp ? (
-                              <span className="shrink-0 text-[11.5px] font-medium text-muted-foreground/58">
+                          <button
+                            type="button"
+                            onClick={() => onSelect(s.key)}
+                            title={tooltipTitle}
+                            className={cn(
+                              "min-w-0 flex-1 overflow-hidden text-left",
+                              compact ? "py-1" : "py-1.5",
+                              projectMode && "pl-7",
+                            )}
+                          >
+                            {projectMode ? (
+                              <span className="flex w-full min-w-0 items-baseline gap-2">
+                                <span className="min-w-0 flex-1 truncate font-medium leading-5">
+                                  {title}
+                                </span>
+                                {timestamp ? (
+                                  <span className="shrink-0 text-[11.5px] font-medium text-muted-foreground/58">
+                                    {timestamp}
+                                  </span>
+                                ) : null}
+                              </span>
+                            ) : (
+                              <span className="block w-full truncate font-medium leading-5">
+                                {title}
+                              </span>
+                            )}
+                            {showPreview ? (
+                              <span className="block w-full truncate text-[11.5px] leading-4 text-muted-foreground/72">
+                                {preview}
+                              </span>
+                            ) : null}
+                            {timestamp && !projectMode ? (
+                              <span className="block w-full truncate text-[11px] leading-4 text-muted-foreground/58">
                                 {timestamp}
                               </span>
                             ) : null}
-                          </span>
-                        ) : (
-                          <span className="block w-full truncate font-medium leading-5">
-                            {title}
-                          </span>
-                        )}
-                        {showPreview ? (
-                          <span className="block w-full truncate text-[11.5px] leading-4 text-muted-foreground/72">
-                            {preview}
-                          </span>
-                        ) : null}
-                        {timestamp && !projectMode ? (
-                          <span className="block w-full truncate text-[11px] leading-4 text-muted-foreground/58">
-                            {timestamp}
-                          </span>
-                        ) : null}
-                        </button>
-                        <SessionActivityIndicator state={activityState} />
-                        <DropdownMenu modal={false}>
-                          <DropdownMenuTrigger
-                            className={cn(
-                              "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/75 opacity-40 transition-opacity",
-                              "hover:bg-sidebar-accent hover:text-sidebar-foreground group-hover:opacity-100",
-                              "focus-visible:opacity-100",
-                              active && "opacity-100",
-                            )}
-                            aria-label={t("chat.actions", { title })}
-                          >
-                            <MoreHorizontal className="h-3.5 w-3.5" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            portalContainer={actionMenuPortalContainer}
-                            onCloseAutoFocus={(event) => event.preventDefault()}
-                          >
-                            <DropdownMenuItem
-                              onSelect={() => onTogglePin(s.key)}
-                            >
-                              {isPinned ? (
-                                <PinOff className="mr-2 h-4 w-4" />
-                              ) : (
-                                <Pin className="mr-2 h-4 w-4" />
+                          </button>
+                          <SessionActivityIndicator state={activityState} />
+                          <DropdownMenu modal={false}>
+                            <DropdownMenuTrigger
+                              className={cn(
+                                "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/75 opacity-40 transition-opacity",
+                                "hover:bg-sidebar-accent hover:text-sidebar-foreground group-hover:opacity-100",
+                                "focus-visible:opacity-100",
+                                active && "opacity-100",
                               )}
-                              {isPinned ? t("chat.unpin") : t("chat.pin")}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onSelect={() => onRequestRename(s.key, title)}
+                              aria-label={t("chat.actions", { title })}
                             >
-                              <Pencil className="mr-2 h-4 w-4" />
-                              {t("chat.rename")}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onSelect={() => onToggleArchive(s.key)}
+                              <MoreHorizontal className="h-3.5 w-3.5" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              portalContainer={actionMenuPortalContainer}
+                              onCloseAutoFocus={(event) => event.preventDefault()}
                             >
-                              {isArchived ? (
-                                <ArchiveRestore className="mr-2 h-4 w-4" />
-                              ) : (
-                                <Archive className="mr-2 h-4 w-4" />
-                              )}
-                              {isArchived ? t("chat.unarchive") : t("chat.archive")}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onSelect={() => {
-                                window.setTimeout(() => onRequestDelete(s.key, title), 0);
-                              }}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              {t("chat.delete")}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-        ))}
+                              <DropdownMenuItem
+                                onSelect={() => onTogglePin(s.key)}
+                              >
+                                {isPinned ? (
+                                  <PinOff className="mr-2 h-4 w-4" />
+                                ) : (
+                                  <Pin className="mr-2 h-4 w-4" />
+                                )}
+                                {isPinned ? t("chat.unpin") : t("chat.pin")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onSelect={() => onRequestRename(s.key, title)}
+                              >
+                                <Pencil className="mr-2 h-4 w-4" />
+                                {t("chat.rename")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onSelect={() => onToggleArchive(s.key)}
+                              >
+                                {isArchived ? (
+                                  <ArchiveRestore className="mr-2 h-4 w-4" />
+                                ) : (
+                                  <Archive className="mr-2 h-4 w-4" />
+                                )}
+                                {isArchived ? t("chat.unarchive") : t("chat.archive")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onSelect={() => {
+                                  window.setTimeout(() => onRequestDelete(s.key, title), 0);
+                                }}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {t("chat.delete")}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              {foldableChatsGroup && canToggleFold ? (
+                <ChatsFoldFooter
+                  folded={foldedChatsGroup}
+                  hiddenCount={hiddenInGroup}
+                  onToggle={() => onToggleGroup?.(group.id)}
+                />
+              ) : null}
+            </section>
+          );
+        })}
         {hiddenSessionCount > 0 ? (
           <div className="px-2 pb-2 pt-1">
             <button
@@ -440,36 +447,38 @@ function ProjectGroupHeader({
   );
 }
 
-function ChatsGroupHeader({
-  label,
+function ChatsGroupHeader({ label }: { label: string }) {
+  return (
+    <div className="px-2 pb-1 text-[12px] font-medium text-muted-foreground/65">
+      {label}
+    </div>
+  );
+}
+
+function ChatsFoldFooter({
   folded,
-  totalCount,
-  visibleCount,
+  hiddenCount,
   onToggle,
 }: {
-  label: string;
   folded: boolean;
-  totalCount: number;
-  visibleCount: number;
+  hiddenCount: number;
   onToggle: () => void;
 }) {
   const { t } = useTranslation();
-  const expandable = totalCount > COLLAPSED_CHATS_VISIBLE_COUNT;
 
   return (
-    <div className="flex min-w-0 items-center gap-2 px-2 pb-1 text-[12px] font-medium text-muted-foreground/65">
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      {expandable ? (
-        <button
-          type="button"
-          onClick={onToggle}
-          className="shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground/70 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-        >
+    <div className="px-2 pb-1 pt-1">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="h-7 w-full rounded-xl text-left text-[12px] font-medium text-muted-foreground/58 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+      >
+        <span className="px-2">
           {folded
-            ? t("chat.showAll", { count: totalCount - visibleCount })
+            ? t("chat.collapsed", { count: hiddenCount })
             : t("chat.showLess")}
-        </button>
-      ) : null}
+        </span>
+      </button>
     </div>
   );
 }

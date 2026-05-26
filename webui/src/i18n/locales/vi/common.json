@@ -411,6 +411,7 @@
     "noSessions": "Chưa có phiên nào.",
     "showMore": "Hiển thị thêm {{count}}",
     "showAll": "Hiển thị tất cả",
+    "collapsed": "Đã thu gọn {{count}}",
     "showLess": "Thu gọn",
     "actions": "Tác vụ cho cuộc trò chuyện {{title}}",
     "activity": {

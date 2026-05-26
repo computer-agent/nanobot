@@ -411,6 +411,7 @@
     "noSessions": "No sessions yet.",
     "showMore": "Show {{count}} more",
     "showAll": "Show all",
+    "collapsed": "{{count}} collapsed",
     "showLess": "Show less",
     "actions": "Chat actions for {{title}}",
     "activity": {

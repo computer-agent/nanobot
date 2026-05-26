@@ -411,6 +411,7 @@
     "noSessions": "まだセッションがありません。",
     "showMore": "さらに {{count}} 件表示",
     "showAll": "すべて表示",
+    "collapsed": "{{count}} 件を折りたたみ中",
     "showLess": "折りたたむ",
     "actions": "「{{title}}」のチャット操作",
     "activity": {

@@ -411,6 +411,7 @@
     "noSessions": "Belum ada sesi.",
     "showMore": "Tampilkan {{count}} lagi",
     "showAll": "Tampilkan semua",
+    "collapsed": "{{count}} diciutkan",
     "showLess": "Tampilkan lebih sedikit",
     "actions": "Aksi obrolan untuk {{title}}",
     "activity": {
