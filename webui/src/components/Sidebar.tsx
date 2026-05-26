@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from "react";
 import {
   Archive,
-  ListFilter,
   Menu,
   Search,
   Settings,
@@ -13,22 +12,10 @@ import { useTranslation } from "react-i18next";
 import { ChatList } from "@/components/ChatList";
 import { ConnectionBadge } from "@/components/ConnectionBadge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import type {
   ChatSummary,
-  SidebarSortMode,
   SidebarViewState,
-  WorkspaceScopePayload,
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +36,6 @@ interface SidebarProps {
   onOpenSearch: () => void;
   activeUtility?: "apps" | null;
   onToggleArchived: () => void;
-  onUpdateView: (view: Partial<SidebarViewState>) => void;
   onCollapse: () => void;
   onExpand?: () => void;
   containActionMenus?: boolean;
@@ -64,7 +50,6 @@ interface SidebarProps {
   viewState?: SidebarViewState;
   showArchived?: boolean;
   archivedCount?: number;
-  workspaceScope?: WorkspaceScopePayload | null;
   defaultWorkspacePath?: string | null;
 }
 
@@ -145,11 +130,6 @@ export function Sidebar(props: SidebarProps) {
           onClick={props.onOpenApps}
           active={props.activeUtility === "apps"}
           icon={<Blocks className="h-4 w-4" />}
-        />
-        <SidebarViewMenu
-          compact={collapsed}
-          view={props.viewState}
-          onUpdateView={props.onUpdateView}
         />
         {props.archivedCount ? (
           <SidebarActionButton
@@ -272,103 +252,4 @@ function SidebarActionButton({
       </span>
     </Button>
   );
-}
-
-function SidebarViewMenu({
-  compact = false,
-  view,
-  onUpdateView,
-}: {
-  compact?: boolean;
-  view?: SidebarViewState;
-  onUpdateView: (view: Partial<SidebarViewState>) => void;
-}) {
-  const { t } = useTranslation();
-  const sort = view?.sort ?? "updated_desc";
-  const setSort = (value: string) => {
-    if (isSidebarSortMode(value)) onUpdateView({ sort: value });
-  };
-
-  return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          aria-label={t("sidebar.viewOptions")}
-          title={compact ? t("sidebar.viewOptions") : undefined}
-          className={cn(
-            "h-8 min-w-0 overflow-hidden font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent/75 hover:text-sidebar-foreground",
-            "transition-[width,padding,border-radius,color,background-color] duration-300 ease-out",
-            compact
-              ? "w-9 justify-center gap-0 rounded-xl px-0"
-              : "w-full justify-start gap-2 rounded-full px-3 text-[12.5px]",
-          )}
-          variant="ghost"
-        >
-          <ListFilter className="h-4 w-4 shrink-0" aria-hidden />
-          <span
-            className={cn(
-              "min-w-0 overflow-hidden truncate whitespace-nowrap transition-[max-width,opacity,transform] duration-200 ease-out",
-              compact
-                ? "max-w-0 -translate-x-1 opacity-0"
-                : "max-w-[12rem] translate-x-0 opacity-100",
-            )}
-          >
-            {t("sidebar.viewOptions")}
-          </span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-52">
-        <DropdownMenuLabel className="text-xs text-muted-foreground">
-          {t("sidebar.viewOptions")}
-        </DropdownMenuLabel>
-        <DropdownMenuCheckboxItem
-          checked={view?.density === "compact"}
-          onCheckedChange={(checked) =>
-            onUpdateView({ density: checked ? "compact" : "comfortable" })
-          }
-          onSelect={(event) => event.preventDefault()}
-        >
-          {t("sidebar.compactList")}
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={Boolean(view?.show_previews)}
-          onCheckedChange={(checked) =>
-            onUpdateView({ show_previews: Boolean(checked) })
-          }
-          onSelect={(event) => event.preventDefault()}
-        >
-          {t("sidebar.showPreviews")}
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={Boolean(view?.show_timestamps)}
-          onCheckedChange={(checked) =>
-            onUpdateView({ show_timestamps: Boolean(checked) })
-          }
-          onSelect={(event) => event.preventDefault()}
-        >
-          {t("sidebar.showTimestamps")}
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs text-muted-foreground">
-          {t("sidebar.sortLabel")}
-        </DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
-          <DropdownMenuRadioItem value="updated_desc">
-            {t("sidebar.sortUpdated")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="created_desc">
-            {t("sidebar.sortCreated")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="title_asc">
-            {t("sidebar.sortTitle")}
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function isSidebarSortMode(value: string): value is SidebarSortMode {
-  return value === "updated_desc" || value === "created_desc" || value === "title_asc";
 }

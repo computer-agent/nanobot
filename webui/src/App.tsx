@@ -722,19 +722,6 @@ function Shell({
     }));
   }, [updateSidebarState]);
 
-  const onUpdateSidebarView = useCallback(
-    (viewUpdate: Partial<typeof sidebarState.view>) => {
-      void updateSidebarState((current) => ({
-        ...current,
-        view: {
-          ...current.view,
-          ...viewUpdate,
-        },
-      }));
-    },
-    [updateSidebarState],
-  );
-
   const onOpenSessionSearch = useCallback(() => {
     setMobileSidebarOpen(false);
     setSessionSearchOpen(true);
@@ -924,7 +911,6 @@ function Shell({
     onOpenSearch: onOpenSessionSearch,
     activeUtility: view === "apps" ? "apps" as const : null,
     onToggleArchived,
-    onUpdateView: onUpdateSidebarView,
     pinnedKeys: sidebarState.pinned_keys,
     archivedKeys: sidebarState.archived_keys,
     titleOverrides: sidebarState.title_overrides,
@@ -935,7 +921,6 @@ function Shell({
     viewState: sidebarState.view,
     showArchived: sidebarState.view.show_archived,
     archivedCount: sidebarState.archived_keys.length,
-    workspaceScope: activeWorkspaceScope,
     defaultWorkspacePath: workspaces?.default_scope.project_path ?? null,
   };
   const showMainSidebar = view !== "settings";
