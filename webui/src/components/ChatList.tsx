@@ -12,7 +12,7 @@ import {
   Pencil,
   Pin,
   PinOff,
-  SquarePen,
+  Plus,
   Trash2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -463,7 +463,7 @@ function ProjectGroupHeader({
             "hover:bg-sidebar-accent hover:text-sidebar-foreground group-hover:opacity-100 focus-visible:opacity-100",
           )}
         >
-          <SquarePen className="h-3.5 w-3.5" />
+          <Plus className="h-3.5 w-3.5" />
         </button>
       ) : null}
     </div>
