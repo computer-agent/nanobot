@@ -192,11 +192,17 @@ class ContextBuilder:
         session_metadata: Mapping[str, Any] | None = None,
         current_runtime_lines: Sequence[str] | None = None,
         workspace: Path | None = None,
+        runtime_state: Any | None = None,
+        inbound_message: Any | None = None,
+        skip_runtime_lines: bool = False,
     ) -> list[dict[str, Any]]:
         """Build the complete message list for an LLM call."""
+        root = workspace or self.workspace
         extra = [
             *goal_state_runtime_lines(session_metadata),
         ]
+        if runtime_state is not None and inbound_message is not None:
+            extra.extend(runtime_lines(runtime_state, inbound_message, root, skip=skip_runtime_lines))
         if current_runtime_lines:
             extra.extend(line for line in current_runtime_lines if line)
         runtime_ctx = self._build_runtime_context(
@@ -223,7 +229,7 @@ class ContextBuilder:
                     skill_names,
                     channel=channel,
                     session_summary=session_summary,
-                    workspace=workspace,
+                    workspace=root,
                 ),
             },
             *history,

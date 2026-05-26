@@ -600,8 +600,9 @@ class AgentLoop:
             sender_id=msg.sender_id,
             session_summary=pending_summary,
             session_metadata=session.metadata,
-            current_runtime_lines=agent_context.runtime_lines(self, msg, scope.project_path),
             workspace=scope.project_path,
+            runtime_state=self,
+            inbound_message=msg,
         )
 
     async def _dispatch_command_inline(
@@ -1097,13 +1098,10 @@ class AgentLoop:
             sender_id=msg.sender_id,
             session_summary=pending,
             session_metadata=session.metadata,
-            current_runtime_lines=agent_context.runtime_lines(
-                self,
-                msg,
-                workspace_scope.project_path,
-                skip=is_subagent,
-            ),
             workspace=workspace_scope.project_path,
+            runtime_state=self,
+            inbound_message=msg,
+            skip_runtime_lines=is_subagent,
         )
         t_wall = time.time()
         final_content, _, all_msgs, stop_reason, _ = await self._run_agent_loop(
