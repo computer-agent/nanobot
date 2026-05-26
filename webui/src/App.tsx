@@ -563,6 +563,28 @@ function Shell({
     setMobileSidebarOpen(false);
   }, []);
 
+  const onNewChatInProject = useCallback(
+    (projectPath: string, projectName: string) => {
+      const base = workspaces?.default_scope ?? activeWorkspaceScope;
+      const trimmed = projectPath.trim();
+      if (!base || !trimmed) {
+        onNewChat();
+        return;
+      }
+      setActiveKey(null);
+      setDraftWorkspaceScope(normalizeWorkspaceScope({
+        project_path: trimmed,
+        project_name: projectName || projectNameFromPath(trimmed),
+        access_mode: base.access_mode,
+        restrict_to_workspace: base.access_mode === "restricted",
+      }));
+      setWorkspaceError(null);
+      setView("chat");
+      setMobileSidebarOpen(false);
+    },
+    [activeWorkspaceScope, onNewChat, workspaces?.default_scope],
+  );
+
   const onSelectChat = useCallback(
     (key: string) => {
       const selected = sessions.find((session) => session.key === key);
@@ -906,6 +928,7 @@ function Shell({
     onToggleArchive,
     onToggleGroup,
     onRequestRenameProject,
+    onNewChatInProject,
     onOpenSettings,
     onOpenApps,
     onOpenSearch: onOpenSessionSearch,

@@ -414,6 +414,7 @@
     "collapsed": "Đã thu gọn {{count}}",
     "showLess": "Thu gọn",
     "actions": "Tác vụ cho cuộc trò chuyện {{title}}",
+    "newInProject": "Bắt đầu cuộc trò chuyện mới trong {{project}}",
     "activity": {
       "running": "Agent running",
       "complete": "Agent finished"

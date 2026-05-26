@@ -7,13 +7,12 @@ import {
 import {
   Archive,
   ArchiveRestore,
-  ChevronDown,
-  ChevronRight,
   Folder,
   MoreHorizontal,
   Pencil,
   Pin,
   PinOff,
+  SquarePen,
   Trash2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -42,6 +41,7 @@ interface ChatListProps {
   onToggleArchive: (key: string) => void;
   onToggleGroup?: (groupId: string) => void;
   onRequestRenameProject?: (projectKey: string, label: string) => void;
+  onNewChatInProject?: (projectPath: string, projectName: string) => void;
   pinnedKeys?: string[];
   archivedKeys?: string[];
   titleOverrides?: Record<string, string>;
@@ -80,6 +80,7 @@ export const ChatList = memo(function ChatList({
   onToggleArchive,
   onToggleGroup,
   onRequestRenameProject,
+  onNewChatInProject,
   pinnedKeys = [],
   archivedKeys = [],
   titleOverrides = {},
@@ -206,6 +207,11 @@ export const ChatList = memo(function ChatList({
                   onRequestRename={
                     group.projectKey && onRequestRenameProject
                       ? () => onRequestRenameProject(group.projectKey ?? "", group.label)
+                      : undefined
+                  }
+                  onNewChat={
+                    group.projectPath && onNewChatInProject
+                      ? () => onNewChatInProject(group.projectPath ?? "", group.label)
                       : undefined
                   }
                   actionMenuPortalContainer={actionMenuPortalContainer}
@@ -385,6 +391,7 @@ function ProjectGroupHeader({
   collapsed,
   onToggle,
   onRequestRename,
+  onNewChat,
   actionMenuPortalContainer,
   updatedAt,
 }: {
@@ -393,11 +400,11 @@ function ProjectGroupHeader({
   collapsed: boolean;
   onToggle: () => void;
   onRequestRename?: () => void;
+  onNewChat?: () => void;
   actionMenuPortalContainer?: HTMLElement | null;
   updatedAt?: string | null;
 }) {
   const { t } = useTranslation();
-  const Chevron = collapsed ? ChevronRight : ChevronDown;
 
   return (
     <div
@@ -412,7 +419,6 @@ function ProjectGroupHeader({
       >
         <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden />
         <span className="min-w-0 flex-1 truncate">{label}</span>
-        <Chevron className="h-3.5 w-3.5 shrink-0 opacity-55" aria-hidden />
       </button>
       {updatedAt ? (
         <span className="shrink-0 text-[11px] text-muted-foreground/55">
@@ -442,6 +448,23 @@ function ProjectGroupHeader({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      ) : null}
+      {onNewChat ? (
+        <button
+          type="button"
+          aria-label={t("chat.newInProject", { project: label })}
+          title={t("chat.newInProject", { project: label })}
+          onClick={(event) => {
+            event.stopPropagation();
+            onNewChat();
+          }}
+          className={cn(
+            "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/70 opacity-40 transition-opacity",
+            "hover:bg-sidebar-accent hover:text-sidebar-foreground group-hover:opacity-100 focus-visible:opacity-100",
+          )}
+        >
+          <SquarePen className="h-3.5 w-3.5" />
+        </button>
       ) : null}
     </div>
   );

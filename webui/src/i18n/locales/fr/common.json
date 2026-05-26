@@ -414,6 +414,7 @@
     "collapsed": "{{count}} masquées",
     "showLess": "Afficher moins",
     "actions": "Actions de la discussion {{title}}",
+    "newInProject": "Démarrer une nouvelle discussion dans {{project}}",
     "activity": {
       "running": "Agent running",
       "complete": "Agent finished"

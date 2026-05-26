@@ -31,6 +31,7 @@ interface SidebarProps {
   onToggleArchive: (key: string) => void;
   onToggleGroup: (groupId: string) => void;
   onRequestRenameProject: (projectKey: string, label: string) => void;
+  onNewChatInProject: (projectPath: string, projectName: string) => void;
   onOpenSettings: () => void;
   onOpenApps: () => void;
   onOpenSearch: () => void;
@@ -159,6 +160,7 @@ export function Sidebar(props: SidebarProps) {
             onToggleArchive={props.onToggleArchive}
             onToggleGroup={props.onToggleGroup}
             onRequestRenameProject={props.onRequestRenameProject}
+            onNewChatInProject={props.onNewChatInProject}
             pinnedKeys={props.pinnedKeys}
             archivedKeys={props.archivedKeys}
             titleOverrides={props.titleOverrides}

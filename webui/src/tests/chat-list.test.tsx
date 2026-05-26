@@ -128,6 +128,7 @@ describe("ChatList", () => {
   it("can collapse a project group and keeps project rename separate from chat titles", async () => {
     const onToggleGroup = vi.fn();
     const onRequestRenameProject = vi.fn();
+    const onNewChatInProject = vi.fn();
     const sessions = [
       session({
         chatId: "alpha",
@@ -151,6 +152,7 @@ describe("ChatList", () => {
         onToggleArchive={vi.fn()}
         onToggleGroup={onToggleGroup}
         onRequestRenameProject={onRequestRenameProject}
+        onNewChatInProject={onNewChatInProject}
         projectNameOverrides={{ "/Users/me/nanobot": "Photos" }}
         collapsedGroups={{ "project:/Users/me/nanobot": true }}
       />,
@@ -161,6 +163,12 @@ describe("ChatList", () => {
 
     expect(onToggleGroup).toHaveBeenCalledWith("project:/Users/me/nanobot");
     expect(within(projectSection).queryByText("Alpha task")).not.toBeInTheDocument();
+
+    fireEvent.click(
+      within(projectSection).getByRole("button", { name: "Start a new chat in Photos" }),
+    );
+    expect(onNewChatInProject).toHaveBeenCalledWith("/Users/me/nanobot", "Photos");
+    expect(onToggleGroup).toHaveBeenCalledTimes(1);
 
     fireEvent.pointerDown(
       within(projectSection).getByLabelText("Chat actions for Photos"),

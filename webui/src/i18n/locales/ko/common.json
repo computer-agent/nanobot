@@ -414,6 +414,7 @@
     "collapsed": "{{count}}개 접힘",
     "showLess": "접기",
     "actions": "{{title}} 채팅 작업",
+    "newInProject": "{{project}}에서 새 채팅 시작",
     "activity": {
       "running": "Agent running",
       "complete": "Agent finished"

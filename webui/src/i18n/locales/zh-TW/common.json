@@ -414,6 +414,7 @@
     "collapsed": "已折疊 {{count}} 個",
     "showLess": "收起",
     "actions": "「{{title}}」的會話操作",
+    "newInProject": "在 {{project}} 中開始新對話",
     "activity": {
       "running": "Agent 正在執行",
       "complete": "Agent 已完成"

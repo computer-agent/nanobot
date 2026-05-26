@@ -414,6 +414,7 @@
     "collapsed": "{{count}} plegados",
     "showLess": "Mostrar menos",
     "actions": "Acciones del chat {{title}}",
+    "newInProject": "Iniciar un chat nuevo en {{project}}",
     "activity": {
       "running": "Agent running",
       "complete": "Agent finished"

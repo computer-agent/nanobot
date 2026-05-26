@@ -414,6 +414,7 @@
     "collapsed": "{{count}} diciutkan",
     "showLess": "Tampilkan lebih sedikit",
     "actions": "Aksi obrolan untuk {{title}}",
+    "newInProject": "Mulai obrolan baru di {{project}}",
     "activity": {
       "running": "Agent running",
       "complete": "Agent finished"

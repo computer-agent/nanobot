@@ -414,6 +414,7 @@
     "collapsed": "{{count}} collapsed",
     "showLess": "Show less",
     "actions": "Chat actions for {{title}}",
+    "newInProject": "Start a new chat in {{project}}",
     "activity": {
       "running": "Agent running",
       "complete": "Agent finished"
