@@ -11,7 +11,7 @@ from nanobot.agent.tools.image_generation import ImageGenerationError, ImageGene
 from nanobot.agent.tools.message import MessageTool
 from nanobot.agent.tools.shell import ExecTool
 from nanobot.agent.tools.spawn import SpawnTool
-from nanobot.agent.workspace_scope import (
+from nanobot.security.workspace_access import (
     WORKSPACE_SCOPE_METADATA_KEY,
     WorkspaceScopeError,
     bind_workspace_scope,

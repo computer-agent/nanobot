@@ -28,7 +28,7 @@ from nanobot.agent.tools.exec_session import (
 from nanobot.agent.tools.context import current_request_context
 from nanobot.agent.tools.sandbox import wrap_command
 from nanobot.agent.tools.schema import BooleanSchema, IntegerSchema, StringSchema, tool_parameters_schema
-from nanobot.agent.workspace_scope import current_workspace_scope
+from nanobot.security.workspace_access import current_workspace_scope
 from nanobot.config.paths import get_media_dir
 from nanobot.config.schema import Base
 from nanobot.security.workspace_policy import is_path_within

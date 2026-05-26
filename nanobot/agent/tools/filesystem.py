@@ -10,7 +10,7 @@ from typing import Any
 from nanobot.agent.tools.base import Tool, tool_parameters
 from nanobot.agent.tools.file_state import FileStates, _hash_file, current_file_states
 from nanobot.agent.tools.path_utils import resolve_workspace_path
-from nanobot.agent.workspace_scope import current_workspace_scope
+from nanobot.security.workspace_access import current_workspace_scope
 from nanobot.agent.tools.schema import (
     BooleanSchema,
     IntegerSchema,

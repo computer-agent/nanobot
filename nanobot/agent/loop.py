@@ -28,10 +28,11 @@ from nanobot.agent.tools.message import MessageTool
 from nanobot.agent.tools.context import RequestContext, bind_request_context, reset_request_context
 from nanobot.agent.tools.registry import ToolRegistry
 from nanobot.agent.tools.self import MyTool
-from nanobot.agent.workspace_scope import (
+from nanobot.security.workspace_access import (
     WorkspaceScopeResolver,
     bind_workspace_scope,
     reset_workspace_scope,
+    workspace_sandbox_status,
 )
 from nanobot.bus.events import InboundMessage, OutboundMessage
 from nanobot.bus.queue import MessageBus
@@ -39,7 +40,6 @@ from nanobot.command import CommandContext, CommandRouter, register_builtin_comm
 from nanobot.config.schema import AgentDefaults, ModelPresetConfig
 from nanobot.providers.base import LLMProvider
 from nanobot.providers.factory import ProviderSnapshot
-from nanobot.security.workspace_sandbox import workspace_sandbox_status
 from nanobot.session.goal_state import (
     goal_state_runtime_lines,
     runner_wall_llm_timeout_s,

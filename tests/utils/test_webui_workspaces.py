@@ -1,6 +1,6 @@
 import json
 
-from nanobot.agent.workspace_scope import default_workspace_scope
+from nanobot.security.workspace_access import default_workspace_scope
 from nanobot.webui.workspaces import (
     read_webui_workspace_state,
     remember_workspace_scope,

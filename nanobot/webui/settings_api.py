@@ -17,7 +17,7 @@ from nanobot.providers.image_generation import (
     image_gen_provider_names,
 )
 from nanobot.providers.registry import PROVIDERS, find_by_name
-from nanobot.security.workspace_sandbox import workspace_sandbox_status
+from nanobot.security.workspace_access import workspace_sandbox_status
 
 QueryParams = dict[str, list[str]]
 
