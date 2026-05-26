@@ -508,7 +508,7 @@ describe("ThreadShell", () => {
       expect(screen.getByPlaceholderText("Ask anything...")).toBeInTheDocument(),
     );
     const input = screen.getByPlaceholderText("Ask anything...");
-    expect(input.className).toContain("min-h-[78px]");
+    expect(input.className).toContain("min-h-[70px]");
     expect(screen.queryByText("old answer")).not.toBeInTheDocument();
   });
 
