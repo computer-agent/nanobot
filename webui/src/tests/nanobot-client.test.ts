@@ -132,6 +132,30 @@ describe("NanobotClient", () => {
     expect(client.getRunStartedAt("chat-strip")).toBeNull();
   });
 
+  it("clears run strip when a turn_end arrives without idle", () => {
+    const client = new NanobotClient({
+      url: "ws://test",
+      reconnect: false,
+      socketFactory: (url) => new FakeSocket(url) as unknown as WebSocket,
+    });
+    const handler = vi.fn();
+    client.onRunStatus(handler);
+    client.connect();
+    lastSocket().fakeOpen();
+    lastSocket().fakeMessage({
+      event: "goal_status",
+      chat_id: "chat-strip",
+      status: "running",
+      started_at: 12_345,
+    });
+    lastSocket().fakeMessage({
+      event: "turn_end",
+      chat_id: "chat-strip",
+    });
+    expect(client.getRunStartedAt("chat-strip")).toBeNull();
+    expect(handler).toHaveBeenLastCalledWith("chat-strip", null);
+  });
+
   it("notifies run status subscribers and replays running chats", () => {
     const client = new NanobotClient({
       url: "ws://test",

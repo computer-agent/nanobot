@@ -210,6 +210,13 @@ export class NanobotClient {
   }
 
   private recordGoalStatusForRunStrip(chatId: string, ev: InboundEvent): void {
+    if (ev.event === "turn_end") {
+      if (this.runStartedAtByChatId.has(chatId)) {
+        this.runStartedAtByChatId.delete(chatId);
+        this.emitRunStatus(chatId, null);
+      }
+      return;
+    }
     if (ev.event !== "goal_status") return;
     if (ev.status === "running" && typeof ev.started_at === "number") {
       const previous = this.runStartedAtByChatId.get(chatId);

@@ -1681,10 +1681,16 @@ class AgentLoop:
             channel=channel, sender_id="user", chat_id=chat_id,
             content=content, media=media or [],
         )
-        return await self._process_message(
-            msg,
-            session_key=session_key,
-            on_progress=on_progress,
-            on_stream=on_stream,
-            on_stream_end=on_stream_end,
-        )
+        try:
+            return await self._process_message(
+                msg,
+                session_key=session_key,
+                on_progress=on_progress,
+                on_stream=on_stream,
+                on_stream_end=on_stream_end,
+            )
+        finally:
+            if channel == "websocket":
+                await self._webui_turns.publish_run_status(msg, "idle")
+                self._pending_turn_latency_ms.pop(session_key, None)
+                self._webui_turns.discard(session_key)

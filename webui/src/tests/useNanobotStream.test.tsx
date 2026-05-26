@@ -14,6 +14,10 @@ function fakeClient() {
   const goalStateByChatId = new Map<string, GoalStateWsPayload>();
 
   function recordGoalStatusForRunStrip(chatId: string, ev: InboundEvent) {
+    if (ev.event === "turn_end") {
+      runStartedAtByChatId.delete(chatId);
+      return;
+    }
     if (ev.event !== "goal_status") return;
     if (ev.status === "running" && typeof ev.started_at === "number") {
       runStartedAtByChatId.set(chatId, ev.started_at);
@@ -1369,6 +1373,31 @@ describe("useNanobotStream", () => {
         event: "goal_status",
         chat_id: "chat-g",
         status: "idle",
+      });
+    });
+    expect(result.current.runStartedAt).toBeNull();
+  });
+
+  it("clears runStartedAt on turn_end even without idle", () => {
+    const fake = fakeClient();
+    const { result } = renderHook(() => useNanobotStream("chat-g", EMPTY_MESSAGES), {
+      wrapper: wrap(fake.client),
+    });
+
+    act(() => {
+      fake.emit("chat-g", {
+        event: "goal_status",
+        chat_id: "chat-g",
+        status: "running",
+        started_at: 1700,
+      });
+    });
+    expect(result.current.runStartedAt).toBe(1700);
+
+    act(() => {
+      fake.emit("chat-g", {
+        event: "turn_end",
+        chat_id: "chat-g",
       });
     });
     expect(result.current.runStartedAt).toBeNull();
