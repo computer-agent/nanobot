@@ -30,11 +30,9 @@ from nanobot.agent.tools.registry import ToolRegistry
 from nanobot.agent.tools.self import MyTool
 from nanobot.agent.workspace_scope import (
     WorkspaceScope,
-    WORKSPACE_SCOPE_METADATA_KEY,
+    WorkspaceScopeResolver,
     bind_workspace_scope,
-    default_workspace_scope,
     reset_workspace_scope,
-    resolve_effective_workspace_scope,
 )
 from nanobot.bus.events import InboundMessage, OutboundMessage
 from nanobot.bus.queue import MessageBus
@@ -252,6 +250,10 @@ class AgentLoop:
             self._image_generation_provider_configs["openrouter"] = image_generation_provider_config
         self.cron_service = cron_service
         self.restrict_to_workspace = restrict_to_workspace
+        self.workspace_scopes = WorkspaceScopeResolver(
+            default_workspace=workspace,
+            default_restrict_to_workspace=restrict_to_workspace,
+        )
         self.workspace_sandbox = workspace_sandbox_status(
             restrict_to_workspace=restrict_to_workspace,
             workspace=workspace,
@@ -592,7 +594,7 @@ class AgentLoop:
         workspace_scope: WorkspaceScope | None = None,
     ) -> list[dict[str, Any]]:
         """Build the initial message list for the LLM turn."""
-        scope = workspace_scope or self._workspace_scope_for(msg, session.metadata)
+        scope = workspace_scope or self.workspace_scopes.for_message(msg, session.metadata)
         return self.context.build_messages(
             history=history,
             current_message=image_generation_prompt(msg.content, msg.metadata),
@@ -605,31 +607,6 @@ class AgentLoop:
             current_runtime_lines=agent_context.runtime_lines(self, msg, scope.project_path),
             workspace=scope.project_path,
         )
-
-    def _default_workspace_scope(self) -> WorkspaceScope:
-        return default_workspace_scope(self.workspace, self.restrict_to_workspace)
-
-    def _workspace_scope_for(
-        self,
-        msg: InboundMessage,
-        session_metadata: dict[str, Any] | None,
-    ) -> WorkspaceScope:
-        if msg.channel != "websocket":
-            return self._default_workspace_scope()
-        return resolve_effective_workspace_scope(
-            message_metadata=msg.metadata,
-            session_metadata=session_metadata,
-            default_workspace=self.workspace,
-            default_restrict_to_workspace=self.restrict_to_workspace,
-        )
-
-    @staticmethod
-    def _persist_message_workspace_scope(session: Session, msg: InboundMessage) -> None:
-        if msg.channel != "websocket":
-            return
-        raw = msg.metadata.get(WORKSPACE_SCOPE_METADATA_KEY)
-        if isinstance(raw, dict):
-            session.metadata[WORKSPACE_SCOPE_METADATA_KEY] = dict(raw)
 
     async def _dispatch_command_inline(
         self,
@@ -779,7 +756,7 @@ class AgentLoop:
             return items
 
         active_session_key = session.key if session else session_key
-        effective_scope = workspace_scope or self._default_workspace_scope()
+        effective_scope = workspace_scope or self.workspace_scopes.default()
         request_ctx = RequestContext(
             channel=channel,
             chat_id=chat_id,
@@ -1110,7 +1087,7 @@ class AgentLoop:
         }
         history = session.get_history(**_hist_kwargs)
         current_role = "assistant" if is_subagent else "user"
-        workspace_scope = self._workspace_scope_for(msg, session.metadata)
+        workspace_scope = self.workspace_scopes.for_message(msg, session.metadata)
 
         messages = self.context.build_messages(
             history=history,
@@ -1304,7 +1281,7 @@ class AgentLoop:
         if ctx.session is None:
             ctx.session = self.sessions.get_or_create(ctx.session_key)
         mark_webui_session(ctx.session, msg.metadata)
-        self._persist_message_workspace_scope(ctx.session, msg)
+        self.workspace_scopes.persist_message_scope(ctx.session, msg)
 
         if self._restore_runtime_checkpoint(ctx.session):
             self.sessions.save(ctx.session)
@@ -1348,7 +1325,10 @@ class AgentLoop:
             ctx.session,
             replay_max_messages=self._max_messages,
         )
-        ctx.workspace_scope = self._workspace_scope_for(ctx.msg, ctx.session.metadata)
+        ctx.workspace_scope = self.workspace_scopes.for_message(
+            ctx.msg,
+            ctx.session.metadata,
+        )
         self._set_tool_context(
             ctx.msg.channel,
             ctx.msg.chat_id,

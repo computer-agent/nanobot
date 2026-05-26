@@ -58,6 +58,45 @@ class WorkspaceScope:
         }
 
 
+@dataclass(frozen=True)
+class WorkspaceScopeResolver:
+    """Resolve the effective workspace scope at an agent turn boundary."""
+
+    default_workspace: str | Path
+    default_restrict_to_workspace: bool
+    scoped_channel: str = "websocket"
+
+    def default(self) -> WorkspaceScope:
+        return default_workspace_scope(
+            self.default_workspace,
+            self.default_restrict_to_workspace,
+        )
+
+    def for_message(
+        self,
+        msg: Any,
+        session_metadata: Any,
+    ) -> WorkspaceScope:
+        if getattr(msg, "channel", None) != self.scoped_channel:
+            return self.default()
+        return resolve_effective_workspace_scope(
+            message_metadata=getattr(msg, "metadata", None),
+            session_metadata=session_metadata,
+            default_workspace=self.default_workspace,
+            default_restrict_to_workspace=self.default_restrict_to_workspace,
+        )
+
+    def persist_message_scope(self, session: Any, msg: Any) -> None:
+        if getattr(msg, "channel", None) != self.scoped_channel:
+            return
+        metadata = getattr(msg, "metadata", None)
+        if not isinstance(metadata, dict):
+            return
+        raw = metadata.get(WORKSPACE_SCOPE_METADATA_KEY)
+        if isinstance(raw, dict):
+            session.metadata[WORKSPACE_SCOPE_METADATA_KEY] = dict(raw)
+
+
 def default_access_mode(restrict_to_workspace: bool) -> WorkspaceAccessMode:
     return "restricted" if restrict_to_workspace else "full"
 
