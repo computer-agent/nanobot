@@ -1410,7 +1410,7 @@ export function ThreadComposer({
               )}
             >
               {showStopButton ? (
-                <Square className={cn("fill-current stroke-current", isHero ? "h-2.5 w-2.5" : "h-2.5 w-2.5")} />
+                <Square className={cn("fill-current stroke-current", isHero ? "h-3 w-3" : "h-3.5 w-3.5")} />
               ) : isStreaming ? (
                 <Loader2 className={cn(isHero ? "h-4 w-4" : "h-4 w-4", "animate-spin")} />
               ) : (
