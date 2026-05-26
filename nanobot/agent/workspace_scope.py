@@ -77,10 +77,23 @@ class WorkspaceScopeResolver:
         msg: Any,
         session_metadata: Any,
     ) -> WorkspaceScope:
-        if getattr(msg, "channel", None) != self.scoped_channel:
+        return self.for_turn(
+            channel=getattr(msg, "channel", None),
+            message_metadata=getattr(msg, "metadata", None),
+            session_metadata=session_metadata,
+        )
+
+    def for_turn(
+        self,
+        *,
+        channel: str | None,
+        message_metadata: Any,
+        session_metadata: Any,
+    ) -> WorkspaceScope:
+        if channel != self.scoped_channel:
             return self.default()
         return resolve_effective_workspace_scope(
-            message_metadata=getattr(msg, "metadata", None),
+            message_metadata=message_metadata,
             session_metadata=session_metadata,
             default_workspace=self.default_workspace,
             default_restrict_to_workspace=self.default_restrict_to_workspace,

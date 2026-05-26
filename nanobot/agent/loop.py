@@ -29,7 +29,6 @@ from nanobot.agent.tools.context import RequestContext, bind_request_context, re
 from nanobot.agent.tools.registry import ToolRegistry
 from nanobot.agent.tools.self import MyTool
 from nanobot.agent.workspace_scope import (
-    WorkspaceScope,
     WorkspaceScopeResolver,
     bind_workspace_scope,
     reset_workspace_scope,
@@ -122,8 +121,6 @@ class TurnContext:
 
     pending_queue: asyncio.Queue | None = None
     pending_summary: str | None = None
-    workspace_scope: WorkspaceScope | None = None
-
     turn_wall_started_at: float = field(default_factory=time.time)
     turn_latency_ms: int | None = None
 
@@ -591,10 +588,9 @@ class AgentLoop:
         session: Session,
         history: list[dict[str, Any]],
         pending_summary: str | None,
-        workspace_scope: WorkspaceScope | None = None,
     ) -> list[dict[str, Any]]:
         """Build the initial message list for the LLM turn."""
-        scope = workspace_scope or self.workspace_scopes.for_message(msg, session.metadata)
+        scope = self.workspace_scopes.for_message(msg, session.metadata)
         return self.context.build_messages(
             history=history,
             current_message=image_generation_prompt(msg.content, msg.metadata),
@@ -669,7 +665,6 @@ class AgentLoop:
         metadata: dict[str, Any] | None = None,
         session_key: str | None = None,
         pending_queue: asyncio.Queue | None = None,
-        workspace_scope: WorkspaceScope | None = None,
     ) -> tuple[str | None, list[str], list[dict], str, bool]:
         """Run the agent iteration loop.
 
@@ -756,7 +751,11 @@ class AgentLoop:
             return items
 
         active_session_key = session.key if session else session_key
-        effective_scope = workspace_scope or self.workspace_scopes.default()
+        effective_scope = self.workspace_scopes.for_turn(
+            channel=channel,
+            message_metadata=metadata,
+            session_metadata=session.metadata if session is not None else None,
+        )
         request_ctx = RequestContext(
             channel=channel,
             chat_id=chat_id,
@@ -1113,7 +1112,6 @@ class AgentLoop:
             metadata=msg.metadata,
             session_key=key,
             pending_queue=pending_queue,
-            workspace_scope=workspace_scope,
         )
         wall_done = time.time()
         latency_ms = max(0, int((wall_done - t_wall) * 1000))
@@ -1325,10 +1323,6 @@ class AgentLoop:
             ctx.session,
             replay_max_messages=self._max_messages,
         )
-        ctx.workspace_scope = self.workspace_scopes.for_message(
-            ctx.msg,
-            ctx.session.metadata,
-        )
         self._set_tool_context(
             ctx.msg.channel,
             ctx.msg.chat_id,
@@ -1357,7 +1351,6 @@ class AgentLoop:
             ctx.session,
             ctx.history,
             ctx.pending_summary,
-            ctx.workspace_scope,
         )
         ctx.user_persisted_early = self._persist_user_message_early(
             ctx.msg, ctx.session
@@ -1385,7 +1378,6 @@ class AgentLoop:
             metadata=ctx.msg.metadata,
             session_key=ctx.session_key,
             pending_queue=ctx.pending_queue,
-            workspace_scope=ctx.workspace_scope,
         )
         final_content, tools_used, all_msgs, stop_reason, had_injections = result
         ctx.final_content = final_content
