@@ -487,7 +487,10 @@ function ChatsFoldFooter({
   hiddenCount: number;
   onToggle: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const collapsedFallback = i18n.resolvedLanguage?.startsWith("zh")
+    ? `已折叠 ${hiddenCount} 个对话`
+    : `${hiddenCount} hidden chats`;
 
   return (
     <div className="px-2 pb-1 pt-1">
@@ -498,7 +501,10 @@ function ChatsFoldFooter({
       >
         <span className="px-2">
           {folded
-            ? t("chat.collapsed", { count: hiddenCount })
+            ? t("chat.collapsed", {
+                count: hiddenCount,
+                defaultValue: collapsedFallback,
+              })
             : t("chat.showLess")}
         </span>
       </button>

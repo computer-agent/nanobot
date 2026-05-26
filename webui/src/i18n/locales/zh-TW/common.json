@@ -411,7 +411,7 @@
     "noSessions": "目前還沒有會話。",
     "showMore": "再顯示 {{count}} 個",
     "showAll": "顯示全部",
-    "collapsed": "已折疊 {{count}} 個",
+    "collapsed": "已折疊 {{count}} 個對話",
     "showLess": "收起",
     "actions": "「{{title}}」的會話操作",
     "newInProject": "在 {{project}} 中開始新對話",

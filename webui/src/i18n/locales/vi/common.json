@@ -411,7 +411,7 @@
     "noSessions": "Chưa có phiên nào.",
     "showMore": "Hiển thị thêm {{count}}",
     "showAll": "Hiển thị tất cả",
-    "collapsed": "Đã thu gọn {{count}}",
+    "collapsed": "Đã thu gọn {{count}} cuộc trò chuyện",
     "showLess": "Thu gọn",
     "actions": "Tác vụ cho cuộc trò chuyện {{title}}",
     "newInProject": "Bắt đầu cuộc trò chuyện mới trong {{project}}",

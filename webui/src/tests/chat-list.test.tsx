@@ -240,7 +240,7 @@ describe("ChatList", () => {
     expect(within(chatsSection).getByText("Chat 2")).toBeInTheDocument();
     expect(within(chatsSection).queryByText("Chat 1")).not.toBeInTheDocument();
     expect(within(chatsSection).queryByRole("button", { name: "Show all" })).not.toBeInTheDocument();
-    fireEvent.click(within(chatsSection).getByRole("button", { name: "2 collapsed" }));
+    fireEvent.click(within(chatsSection).getByRole("button", { name: "2 hidden chats" }));
 
     expect(onToggleGroup).toHaveBeenCalledWith("workspace:chats");
 

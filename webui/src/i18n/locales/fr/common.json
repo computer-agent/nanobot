@@ -411,7 +411,7 @@
     "noSessions": "Aucune session pour le moment.",
     "showMore": "Afficher {{count}} de plus",
     "showAll": "Tout afficher",
-    "collapsed": "{{count}} masquées",
+    "collapsed": "{{count}} discussions masquées",
     "showLess": "Afficher moins",
     "actions": "Actions de la discussion {{title}}",
     "newInProject": "Démarrer une nouvelle discussion dans {{project}}",

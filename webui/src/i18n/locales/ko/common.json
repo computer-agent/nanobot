@@ -411,7 +411,7 @@
     "noSessions": "아직 세션이 없습니다.",
     "showMore": "{{count}}개 더 보기",
     "showAll": "모두 보기",
-    "collapsed": "{{count}}개 접힘",
+    "collapsed": "{{count}}개 채팅 접힘",
     "showLess": "접기",
     "actions": "{{title}} 채팅 작업",
     "newInProject": "{{project}}에서 새 채팅 시작",

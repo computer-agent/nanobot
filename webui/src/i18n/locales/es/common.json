@@ -411,7 +411,7 @@
     "noSessions": "Todavía no hay sesiones.",
     "showMore": "Mostrar {{count}} más",
     "showAll": "Mostrar todo",
-    "collapsed": "{{count}} plegados",
+    "collapsed": "{{count}} chats ocultos",
     "showLess": "Mostrar menos",
     "actions": "Acciones del chat {{title}}",
     "newInProject": "Iniciar un chat nuevo en {{project}}",

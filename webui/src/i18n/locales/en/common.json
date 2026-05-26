@@ -411,7 +411,7 @@
     "noSessions": "No sessions yet.",
     "showMore": "Show {{count}} more",
     "showAll": "Show all",
-    "collapsed": "{{count}} collapsed",
+    "collapsed": "{{count}} hidden chats",
     "showLess": "Show less",
     "actions": "Chat actions for {{title}}",
     "newInProject": "Start a new chat in {{project}}",

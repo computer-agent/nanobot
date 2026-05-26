@@ -411,7 +411,7 @@
     "noSessions": "Belum ada sesi.",
     "showMore": "Tampilkan {{count}} lagi",
     "showAll": "Tampilkan semua",
-    "collapsed": "{{count}} diciutkan",
+    "collapsed": "{{count}} obrolan diciutkan",
     "showLess": "Tampilkan lebih sedikit",
     "actions": "Aksi obrolan untuk {{title}}",
     "newInProject": "Mulai obrolan baru di {{project}}",
