@@ -10,7 +10,14 @@ from typing import Any
 
 from loguru import logger
 
-from nanobot.agent.workspace_scope import WorkspaceScope, default_workspace_scope
+from nanobot.security.workspace_access import (
+    WORKSPACE_SCOPE_METADATA_KEY,
+    WorkspaceScope,
+    WorkspaceScopeError,
+    default_workspace_scope,
+    validate_workspace_scope_payload,
+    workspace_scope_from_metadata,
+)
 from nanobot.config.paths import get_webui_dir
 
 WEBUI_WORKSPACE_STATE_SCHEMA_VERSION = 1
@@ -170,3 +177,124 @@ def workspaces_payload(
             "can_use_full_access": controls_available,
         },
     }
+
+
+class WebUIWorkspaceController:
+    """Own WebUI project scope persistence and validation."""
+
+    def __init__(
+        self,
+        *,
+        session_manager: Any | None,
+        default_workspace: Path,
+        default_restrict_to_workspace: bool,
+        logger_: Any = logger,
+    ) -> None:
+        self._sessions = session_manager
+        self._default_workspace = default_workspace
+        self._default_restrict_to_workspace = default_restrict_to_workspace
+        self._logger = logger_
+
+    def default_scope(self) -> WorkspaceScope:
+        return default_workspace_scope(
+            self._default_workspace,
+            self._default_restrict_to_workspace,
+        )
+
+    def scope_for_session_key(self, session_key: str) -> WorkspaceScope:
+        if self._sessions is None:
+            return self.default_scope()
+        data = self._sessions.read_session_file(session_key)
+        metadata = data.get("metadata", {}) if isinstance(data, dict) else {}
+        return workspace_scope_from_metadata(
+            metadata,
+            default_workspace=self._default_workspace,
+            default_restrict_to_workspace=self._default_restrict_to_workspace,
+        )
+
+    def payload(self, *, controls_available: bool) -> dict[str, Any]:
+        return workspaces_payload(
+            default_workspace=self._default_workspace,
+            default_restrict_to_workspace=self._default_restrict_to_workspace,
+            controls_available=controls_available,
+        )
+
+    def scope_from_envelope(
+        self,
+        envelope: dict[str, Any],
+        *,
+        session_key: str | None,
+        controls_available: bool,
+    ) -> WorkspaceScope:
+        raw = envelope.get(WORKSPACE_SCOPE_METADATA_KEY)
+        if raw is None and session_key:
+            scope = self.scope_for_session_key(session_key)
+        else:
+            scope = validate_workspace_scope_payload(
+                raw,
+                default_workspace=self._default_workspace,
+                default_restrict_to_workspace=self._default_restrict_to_workspace,
+            )
+        if not controls_available and scope.metadata() != self.default_scope().metadata():
+            raise WorkspaceScopeError("workspace controls are localhost-only", status=403)
+        return scope
+
+    def scope_for_new_chat(
+        self,
+        envelope: dict[str, Any],
+        *,
+        controls_available: bool,
+    ) -> WorkspaceScope:
+        return self.scope_from_envelope(
+            envelope,
+            session_key=None,
+            controls_available=controls_available,
+        )
+
+    def scope_for_set_request(
+        self,
+        envelope: dict[str, Any],
+        *,
+        chat_id: str,
+        chat_running: bool,
+        controls_available: bool,
+    ) -> WorkspaceScope:
+        if chat_running:
+            raise WorkspaceScopeError("chat_running", status=409)
+        return self.scope_from_envelope(
+            envelope,
+            session_key=f"websocket:{chat_id}",
+            controls_available=controls_available,
+        )
+
+    def scope_for_message(
+        self,
+        envelope: dict[str, Any],
+        *,
+        chat_id: str,
+        chat_running: bool,
+        controls_available: bool,
+    ) -> WorkspaceScope:
+        scope = self.scope_from_envelope(
+            envelope,
+            session_key=f"websocket:{chat_id}",
+            controls_available=controls_available,
+        )
+        if (
+            WORKSPACE_SCOPE_METADATA_KEY in envelope
+            and chat_running
+            and scope.metadata() != self.scope_for_session_key(f"websocket:{chat_id}").metadata()
+        ):
+            raise WorkspaceScopeError("chat_running", status=409)
+        return scope
+
+    def persist_scope(self, chat_id: str, scope: WorkspaceScope) -> None:
+        if self._sessions is not None:
+            session = self._sessions.get_or_create(f"websocket:{chat_id}")
+            session.metadata["webui"] = True
+            session.metadata[WORKSPACE_SCOPE_METADATA_KEY] = scope.metadata()
+            self._sessions.save(session)
+        try:
+            remember_workspace_scope(scope)
+        except Exception as exc:
+            self._logger.warning("failed to persist WebUI workspace state: {}", exc)
