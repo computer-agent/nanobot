@@ -707,14 +707,14 @@ def test_agent_config_sets_active_path(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr("nanobot.cli.commands.sync_workspace_templates", lambda _path: None)
     monkeypatch.setattr("nanobot.providers.factory.make_provider", lambda _config: _fake_provider())
     monkeypatch.setattr("nanobot.bus.queue.MessageBus", lambda: object())
-    monkeypatch.setattr("nanobot.cron.service.CronService", lambda _store: object())
+    monkeypatch.setattr("nanobot.cron.service.CronService", lambda _store: MagicMock())
 
     class _FakeAgentLoop:
         @classmethod
         def from_config(cls, config, bus=None, **extra):
             return cls(**extra)
         def __init__(self, *args, **kwargs) -> None:
-            pass
+            self.dream = MagicMock()
 
         async def process_direct(self, *_args, **_kwargs):
             return OutboundMessage(channel="cli", chat_id="direct", content="ok")
@@ -750,12 +750,15 @@ def test_agent_uses_workspace_directory_for_cron_store(monkeypatch, tmp_path: Pa
         def __init__(self, store_path: Path) -> None:
             seen["cron_store"] = store_path
 
+        def register_system_job(self, _job) -> None:
+            pass
+
     class _FakeAgentLoop:
         @classmethod
         def from_config(cls, config, bus=None, **extra):
             return cls(**extra)
         def __init__(self, *args, **kwargs) -> None:
-            pass
+            self.dream = MagicMock()
 
         async def process_direct(self, *_args, **_kwargs):
             return OutboundMessage(channel="cli", chat_id="direct", content="ok")
@@ -800,12 +803,15 @@ def test_agent_workspace_override_does_not_migrate_legacy_cron(
         def __init__(self, store_path: Path) -> None:
             seen["cron_store"] = store_path
 
+        def register_system_job(self, _job) -> None:
+            pass
+
     class _FakeAgentLoop:
         @classmethod
         def from_config(cls, config, bus=None, **extra):
             return cls(**extra)
         def __init__(self, *args, **kwargs) -> None:
-            pass
+            self.dream = MagicMock()
 
         async def process_direct(self, *_args, **_kwargs):
             return OutboundMessage(channel="cli", chat_id="direct", content="ok")
@@ -856,12 +862,15 @@ def test_agent_custom_config_workspace_does_not_migrate_legacy_cron(
         def __init__(self, store_path: Path) -> None:
             seen["cron_store"] = store_path
 
+        def register_system_job(self, _job) -> None:
+            pass
+
     class _FakeAgentLoop:
         @classmethod
         def from_config(cls, config, bus=None, **extra):
             return cls(**extra)
         def __init__(self, *args, **kwargs) -> None:
-            pass
+            self.dream = MagicMock()
 
         async def process_direct(self, *_args, **_kwargs):
             return OutboundMessage(channel="cli", chat_id="direct", content="ok")
