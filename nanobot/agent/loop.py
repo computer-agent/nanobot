@@ -1168,6 +1168,20 @@ class AgentLoop:
             metadata=outbound_metadata,
         )
 
+    def _inject_dream_tool_context(self, session_key: str) -> None:
+        """Set RequestContext on all ContextAware tools in Dream's registry."""
+        from nanobot.agent.tools.context import ContextAware, RequestContext
+
+        ctx = RequestContext(
+            channel="system",
+            chat_id="dream",
+            session_key=session_key,
+        )
+        for name in self.dream._tools.tool_names:
+            tool = self.dream._tools.get(name)
+            if tool and isinstance(tool, ContextAware):
+                tool.set_context(ctx)
+
     async def _process_dream_batch(self, session: Session, msg: InboundMessage) -> tuple[bool, bool]:
         """Process the full Dream backlog in a single invocation.
 
@@ -1185,14 +1199,10 @@ class AgentLoop:
 
         if cached_prompt is None or cached_mtime != current_mtime:
             skill_creator_path = BUILTIN_SKILLS_DIR / "skill-creator" / "SKILL.md"
-            workspace = self.dream.store.workspace
             cached_prompt = render_template(
                 "agent/dream.md",
                 strip=True,
                 skill_creator_path=str(skill_creator_path),
-                soul_path=str(workspace / "SOUL.md"),
-                user_path=str(workspace / "USER.md"),
-                memory_path=str(workspace / "memory" / "MEMORY.md"),
             )
             session.metadata["_dream_system_prompt"] = cached_prompt
             session.metadata["_dream_system_prompt_mtime"] = current_mtime
@@ -1237,13 +1247,13 @@ class AgentLoop:
         file_context = (
             f"## Current Date\n{current_date}\n\n"
             f"## Memory Files (read before editing)\n"
-            f"- MEMORY.md: memory/MEMORY.md "
+            f"- memory/MEMORY.md "
             f"({len(raw_memory)} chars, {len(memory_lines)} lines)\n"
-            f"- SOUL.md: SOUL.md "
+            f"- SOUL.md "
             f"({len(raw_soul)} chars, {len(soul_lines)} lines)\n"
-            f"- USER.md: USER.md "
+            f"- USER.md "
             f"({len(raw_user)} chars, {len(user_lines)} lines)\n"
-            f"- History batch: .dream_batch.jsonl "
+            f"- .dream_batch.jsonl "
             f"({len(entries)} entries, cursor {last_cursor + 1}→{entries[-1]['cursor']})"
         )
 
@@ -1256,6 +1266,9 @@ class AgentLoop:
         ]
 
         t_start = time.perf_counter()
+        # Inject RequestContext into Dream's tool registry so ContextAware
+        # tools (long_task, complete_goal) can find the session.
+        self._inject_dream_tool_context(session.key)
         try:
             result = await self.dream._runner.run(AgentRunSpec(
                 initial_messages=messages,
