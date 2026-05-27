@@ -680,16 +680,17 @@ export function ThreadComposer({
   }, [disabled, slashMenuDismissed, value]);
 
   const visibleSlashCommands = useMemo(() => {
-    if (!(isStreaming && onStop)) return slashCommands;
-    if (slashCommands.some((command) => command.command === "/stop")) return slashCommands;
+    const baseCommands = slashCommands.filter((command) => command.command !== "/stop");
+    if (!(isStreaming && onStop)) return baseCommands;
+    const stopCommand = slashCommands.find((command) => command.command === "/stop") ?? {
+      command: "/stop",
+      title: "Stop current task",
+      description: "Cancel the active agent turn for this chat.",
+      icon: "square",
+    };
     return [
-      {
-        command: "/stop",
-        title: "Stop current task",
-        description: "Cancel the active agent turn for this chat.",
-        icon: "square",
-      },
-      ...slashCommands,
+      stopCommand,
+      ...baseCommands,
     ];
   }, [isStreaming, onStop, slashCommands]);
 
@@ -951,13 +952,6 @@ export function ThreadComposer({
 
   const chooseSlashCommand = useCallback(
     (command: SlashCommand) => {
-      const nextRecents = [
-        command.command,
-        ...recentSlashCommands.filter((item) => item !== command.command),
-      ].slice(0, SLASH_RECENTS_LIMIT);
-      setRecentSlashCommands(nextRecents);
-      storeSlashRecents(nextRecents);
-
       if (command.command === "/stop" && isStreaming && onStop) {
         onStop();
         setValue("");
@@ -967,6 +961,13 @@ export function ThreadComposer({
         resizeTextarea();
         return;
       }
+
+      const nextRecents = [
+        command.command,
+        ...recentSlashCommands.filter((item) => item !== command.command),
+      ].slice(0, SLASH_RECENTS_LIMIT);
+      setRecentSlashCommands(nextRecents);
+      storeSlashRecents(nextRecents);
 
       setValue(command.argHint ? `${command.command} ` : command.command);
       setSlashMenuDismissed(true);
@@ -1755,6 +1756,23 @@ interface CliAppMentionPaletteProps {
   onChoose: (candidate: MentionCandidate) => void;
 }
 
+function useSelectedOptionScroll(selectedIndex: number) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const option = container.querySelector<HTMLElement>(
+      `[data-palette-index="${selectedIndex}"]`,
+    );
+    if (typeof option?.scrollIntoView === "function") {
+      option.scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedIndex]);
+
+  return containerRef;
+}
+
 function ImageAspectMenu({
   selected,
   isHero,
@@ -1821,6 +1839,7 @@ function CliAppMentionPalette({
     0,
     layout.maxHeight - SLASH_PALETTE_CHROME_PX,
   );
+  const listRef = useSelectedOptionScroll(selectedIndex);
   return (
     <div
       role="listbox"
@@ -1837,7 +1856,7 @@ function CliAppMentionPalette({
       <div className="px-2 pb-1.5 pt-0.5 text-[13px] font-semibold text-muted-foreground/78">
         {t("thread.composer.mentions.label")}
       </div>
-      <div className="overflow-y-auto" style={{ maxHeight: listMaxHeight }}>
+      <div ref={listRef} className="overflow-y-auto" style={{ maxHeight: listMaxHeight }}>
         {candidates.map((candidate, index) => {
           const selected = index === selectedIndex;
           const name = candidate.name;
@@ -1855,6 +1874,7 @@ function CliAppMentionPalette({
               key={`${candidate.kind}-${name}`}
               type="button"
               role="option"
+              data-palette-index={index}
               aria-selected={selected}
               aria-label={`${displayName} @${name} ${ariaDescription} ${typeLabel}`}
               onMouseEnter={() => onHover(index)}
@@ -1955,6 +1975,7 @@ function SlashCommandPalette({
     0,
     layout.maxHeight - SLASH_PALETTE_CHROME_PX,
   );
+  const listRef = useSelectedOptionScroll(selectedIndex);
   return (
     <div
       role="listbox"
@@ -1968,7 +1989,7 @@ function SlashCommandPalette({
         isHero ? "max-w-[58rem]" : "max-w-[49.5rem]",
       )}
     >
-      <div className="overflow-y-auto pr-0.5" style={{ maxHeight: listMaxHeight }}>
+      <div ref={listRef} className="overflow-y-auto pr-0.5" style={{ maxHeight: listMaxHeight }}>
         {commands.map((command, index) => {
           const Icon = COMMAND_ICONS[command.icon] ?? CircleHelp;
           const selected = index === selectedIndex;
@@ -1984,6 +2005,7 @@ function SlashCommandPalette({
               key={command.command}
               type="button"
               role="option"
+              data-palette-index={index}
               aria-selected={selected}
               onMouseEnter={() => onHover(index)}
               onMouseDown={(e) => {

@@ -333,12 +333,7 @@ describe("ThreadComposer", () => {
     const palette = screen.getByRole("listbox", { name: "Slash commands" });
     expect(palette).toBeInTheDocument();
     expect(palette).toHaveStyle({ maxHeight: "288px" });
-    expect(screen.getByRole("option", { name: /\/stop/i })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-
-    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(screen.queryByRole("option", { name: /\/stop/i })).not.toBeInTheDocument();
     expect(screen.getByRole("option", { name: /\/history/i })).toHaveAttribute(
       "aria-selected",
       "true",
@@ -401,6 +396,7 @@ describe("ThreadComposer", () => {
 
     expect(onStop).toHaveBeenCalledTimes(1);
     expect(input).toHaveValue("");
+    expect(window.localStorage.getItem("nanobot.webui.slashCommandRecents")).toBeNull();
   });
 
   it("orders recent slash commands first for the blank slash menu", () => {
@@ -422,6 +418,42 @@ describe("ThreadComposer", () => {
       "true",
     );
     expect(screen.getByText("Recent")).toBeInTheDocument();
+  });
+
+  it("keeps keyboard-selected slash options visible while navigating", () => {
+    const scrollIntoView = vi.fn();
+    const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
+    HTMLElement.prototype.scrollIntoView = scrollIntoView;
+
+    try {
+      render(
+        <ThreadComposer
+          onSend={vi.fn()}
+          placeholder="Type your message..."
+          slashCommands={Array.from({ length: 8 }, (_, index) => ({
+            command: `/cmd-${index}`,
+            title: `Command ${index}`,
+            description: `Description ${index}`,
+            icon: "activity",
+          }))}
+        />,
+      );
+
+      const input = screen.getByLabelText("Message input");
+      fireEvent.change(input, { target: { value: "/" } });
+      scrollIntoView.mockClear();
+
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+
+      expect(screen.getByRole("option", { name: /\/cmd-2/i })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(scrollIntoView).toHaveBeenLastCalledWith({ block: "nearest" });
+    } finally {
+      HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    }
   });
 
   it("opens the CLI app mention palette and inserts the selected app", () => {
@@ -470,6 +502,52 @@ describe("ThreadComposer", () => {
         brand_color: "#E87D0D",
       }],
     });
+  });
+
+  it("keeps keyboard-selected mention options visible while navigating", () => {
+    const scrollIntoView = vi.fn();
+    const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
+    HTMLElement.prototype.scrollIntoView = scrollIntoView;
+
+    try {
+      render(
+        <ThreadComposer
+          onSend={vi.fn()}
+          placeholder="Type your message..."
+          cliApps={Array.from({ length: 8 }, (_, index) => ({
+            name: `app-${index}`,
+            display_name: `App ${index}`,
+            category: "test",
+            description: "Test app",
+            requires: "",
+            source: "harness",
+            entry_point: `app-${index}`,
+            install_supported: true,
+            installed: true,
+            available: true,
+            status: "installed",
+            logo_url: null,
+            brand_color: "#111827",
+            skill_installed: true,
+          }))}
+        />,
+      );
+
+      const input = screen.getByLabelText("Message input");
+      fireEvent.change(input, { target: { value: "@", selectionStart: 1 } });
+      scrollIntoView.mockClear();
+
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+
+      expect(screen.getByRole("option", { name: /@app-2/i })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(scrollIntoView).toHaveBeenLastCalledWith({ block: "nearest" });
+    } finally {
+      HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    }
   });
 
   it("completes a CLI app mention with Tab and adds exactly one trailing space", () => {
