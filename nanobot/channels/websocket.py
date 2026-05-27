@@ -52,9 +52,14 @@ from nanobot.utils.subagent_channel_display import scrub_subagent_messages_for_c
 from nanobot.webui.settings_api import (
     WebUISettingsError,
     create_model_configuration,
+    decorate_settings_payload,
+    login_oauth_provider,
+    logout_oauth_provider,
+    runtime_capabilities,
     settings_payload,
     update_agent_settings,
     update_image_generation_settings,
+    update_model_configuration,
     update_provider_settings,
     update_web_search_settings,
 )
@@ -547,6 +552,8 @@ class WebSocketChannel(BaseChannel):
         workspace_path: Path | None = None,
         restrict_to_workspace: bool = False,
         runtime_model_name: Callable[[], str | None] | None = None,
+        runtime_surface: str = "web",
+        runtime_capabilities_overrides: dict[str, Any] | None = None,
     ):
         if isinstance(config, dict):
             config = WebSocketConfig.model_validate(config)
@@ -581,6 +588,11 @@ class WebSocketChannel(BaseChannel):
             logger_=self.logger,
         )
         self._runtime_model_name = runtime_model_name
+        self._runtime_surface = "desktop" if runtime_surface == "desktop" else "web"
+        self._runtime_capabilities = runtime_capabilities(
+            self._runtime_surface,
+            runtime_capabilities_overrides,
+        )
         self._settings_restart_sections: set[str] = set()
         self._stream_text_buffers: dict[tuple[str, str], list[str]] = {}
         # Process-local secret used to HMAC-sign media URLs. The signed URL is
@@ -760,8 +772,17 @@ class WebSocketChannel(BaseChannel):
         if got == "/api/settings/model-configurations/create":
             return self._handle_settings_model_configuration_create(request)
 
+        if got == "/api/settings/model-configurations/update":
+            return self._handle_settings_model_configuration_update(request)
+
         if got == "/api/settings/provider/update":
             return self._handle_settings_provider_update(request)
+
+        if got == "/api/settings/provider/oauth-login":
+            return await self._handle_settings_provider_oauth(request, "login")
+
+        if got == "/api/settings/provider/oauth-logout":
+            return await self._handle_settings_provider_oauth(request, "logout")
 
         if got == "/api/settings/web-search/update":
             return self._handle_settings_web_search_update(request)
@@ -825,6 +846,12 @@ class WebSocketChannel(BaseChannel):
             if not self.is_allowed(client_id):
                 return connection.respond(403, "Forbidden")
             return self._authorize_websocket_handshake(connection, query)
+
+        # API clients should never receive the SPA shell for an unknown route.
+        # Returning HTML here makes the WebUI fail with "Unexpected token <"
+        # when a dev server is pointed at an older gateway.
+        if got.startswith("/api/"):
+            return _http_error(404, "API route not found")
 
         # 5. Static SPA serving (only if a build directory was wired in).
         if self._static_dist_path is not None:
@@ -893,6 +920,8 @@ class WebSocketChannel(BaseChannel):
                 "ws_url": ws_url,
                 "expires_in": self.config.token_ttl_s,
                 "model_name": _resolve_bootstrap_model_name(self._runtime_model_name),
+                "runtime_surface": self._runtime_surface,
+                "runtime_capabilities": self._runtime_capabilities,
             }
         )
 
@@ -942,7 +971,14 @@ class WebSocketChannel(BaseChannel):
     def _handle_settings(self, request: WsRequest) -> Response:
         if not self._check_api_token(request):
             return _http_error(401, "Unauthorized")
-        return _http_json_response(self._with_settings_restart_state(settings_payload()))
+        return _http_json_response(
+            self._with_settings_restart_state(
+                settings_payload(
+                    surface=self._runtime_surface,
+                    runtime_capability_overrides=self._runtime_capabilities,
+                )
+            )
+        )
 
     def _with_settings_restart_state(
         self,
@@ -953,14 +989,16 @@ class WebSocketChannel(BaseChannel):
         """Keep restart-required state alive for this gateway process."""
         if section and payload.get("requires_restart"):
             self._settings_restart_sections.add(section)
-        if self._settings_restart_sections:
-            payload = dict(payload)
+        sections = sorted(self._settings_restart_sections)
+        payload = dict(payload)
+        if sections:
             payload["requires_restart"] = True
-            payload["restart_required_sections"] = sorted(self._settings_restart_sections)
-        else:
-            payload = dict(payload)
-            payload["restart_required_sections"] = []
-        return payload
+        return decorate_settings_payload(
+            payload,
+            surface=self._runtime_surface,
+            runtime_capability_overrides=self._runtime_capabilities,
+            restart_required_sections=sections,
+        )
 
     def _handle_commands(self, request: WsRequest) -> Response:
         if not self._check_api_token(request):
@@ -1016,6 +1054,16 @@ class WebSocketChannel(BaseChannel):
             return _http_error(e.status, e.message)
         return _http_json_response(self._with_settings_restart_state(payload))
 
+    def _handle_settings_model_configuration_update(self, request: WsRequest) -> Response:
+        if not self._check_api_token(request):
+            return _http_error(401, "Unauthorized")
+        query = _parse_query(request.path)
+        try:
+            payload = update_model_configuration(query)
+        except WebUISettingsError as e:
+            return _http_error(e.status, e.message)
+        return _http_json_response(self._with_settings_restart_state(payload))
+
     def _handle_settings_provider_update(self, request: WsRequest) -> Response:
         if not self._check_api_token(request):
             return _http_error(401, "Unauthorized")
@@ -1025,6 +1073,19 @@ class WebSocketChannel(BaseChannel):
         except WebUISettingsError as e:
             return _http_error(e.status, e.message)
         return _http_json_response(self._with_settings_restart_state(payload, section="image"))
+
+    async def _handle_settings_provider_oauth(self, request: WsRequest, action: str) -> Response:
+        if not self._check_api_token(request):
+            return _http_error(401, "Unauthorized")
+        query = _parse_query(request.path)
+        try:
+            if action == "login":
+                payload = await asyncio.to_thread(login_oauth_provider, query)
+            else:
+                payload = await asyncio.to_thread(logout_oauth_provider, query)
+        except WebUISettingsError as e:
+            return _http_error(e.status, e.message)
+        return _http_json_response(self._with_settings_restart_state(payload))
 
     def _handle_settings_web_search_update(self, request: WsRequest) -> Response:
         if not self._check_api_token(request):

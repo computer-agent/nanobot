@@ -1371,6 +1371,15 @@ async def test_settings_api_returns_safe_subset_and_updates_whitelist(
     config.tools.web.search.api_key = "brave-secret"
     save_config(config, config_path)
     monkeypatch.setattr("nanobot.config.loader._current_config_path", config_path)
+    monkeypatch.setattr(
+        "nanobot.webui.settings_api._oauth_provider_status",
+        lambda _spec: {
+            "configured": False,
+            "account": None,
+            "expires_at": None,
+            "login_supported": True,
+        },
+    )
 
     channel = _ch(bus, port=port)
     channel._api_tokens["tok"] = time.monotonic() + 300
@@ -1407,6 +1416,8 @@ async def test_settings_api_returns_safe_subset_and_updates_whitelist(
         assert providers["atomic_chat"]["configured"] is False
         assert providers["atomic_chat"]["api_key_required"] is False
         assert providers["atomic_chat"]["default_api_base"] == "http://localhost:1337/v1"
+        assert providers["openai_codex"]["auth_type"] == "oauth"
+        assert providers["openai_codex"]["configured"] is False
         assert body["agent"]["has_api_key"] is True
         assert body["web_search"]["provider"] == "brave"
         assert body["web_search"]["api_key_hint"] == "brav••••cret"
@@ -1425,7 +1436,8 @@ async def test_settings_api_returns_safe_subset_and_updates_whitelist(
         }
         assert image_providers["openrouter"]["label"] == "OpenRouter"
         assert image_providers["openrouter"]["configured"] is False
-        assert image_providers["openai_codex"]["configured"] is True
+        assert image_providers["openai_codex"]["auth_type"] == "oauth"
+        assert image_providers["openai_codex"]["configured"] is False
         assert image_providers["gemini"]["label"] == "Gemini"
         assert body["runtime"]["config_path"] == str(config_path)
         workspace_path = body["runtime"]["workspace_path"].replace("\\", "/")
@@ -1436,6 +1448,13 @@ async def test_settings_api_returns_safe_subset_and_updates_whitelist(
         assert body["restart_required_sections"] == []
         assert "secret-key" not in settings.text
         assert "brave-secret" not in settings.text
+
+        unknown_api = await _http_get(
+            f"http://127.0.0.1:{port}/api/settings/model-configurations/missing",
+            headers={"Authorization": "Bearer tok"},
+        )
+        assert unknown_api.status_code == 404
+        assert "<!doctype html>" not in unknown_api.text.lower()
 
         provider_updated = await _http_get(
             "http://127.0.0.1:"
@@ -1507,6 +1526,21 @@ async def test_settings_api_returns_safe_subset_and_updates_whitelist(
         }
         assert created_presets["fast-writing"]["label"] == "Fast writing"
         assert created_presets["fast-writing"]["provider"] == "openai"
+
+        updated_preset = await _http_get(
+            "http://127.0.0.1:"
+            f"{port}/api/settings/model-configurations/update"
+            "?name=fast-writing&label=Codex&provider=openai&model=openai%2Fgpt-5.5",
+            headers={"Authorization": "Bearer tok"},
+        )
+        assert updated_preset.status_code == 200
+        updated_preset_body = updated_preset.json()
+        assert updated_preset_body["agent"]["model_preset"] == "fast-writing"
+        assert updated_preset_body["agent"]["model"] == "openai/gpt-5.5"
+        updated_presets = {
+            preset["name"]: preset for preset in updated_preset_body["model_presets"]
+        }
+        assert updated_presets["fast-writing"]["label"] == "Codex"
 
         duplicate_preset = await _http_get(
             "http://127.0.0.1:"
@@ -1584,8 +1618,8 @@ async def test_settings_api_returns_safe_subset_and_updates_whitelist(
         assert saved.agents.defaults.model == "atomic_chat/test"
         assert saved.agents.defaults.provider == "atomic_chat"
         assert saved.agents.defaults.model_preset == "fast-writing"
-        assert saved.model_presets["fast-writing"].label == "Fast writing"
-        assert saved.model_presets["fast-writing"].model == "openai/gpt-4.1-mini"
+        assert saved.model_presets["fast-writing"].label == "Codex"
+        assert saved.model_presets["fast-writing"].model == "openai/gpt-5.5"
         assert saved.model_presets["fast-writing"].provider == "openai"
         assert saved.agents.defaults.timezone == "Asia/Shanghai"
         assert saved.agents.defaults.bot_name == "Nano"
@@ -1639,6 +1673,43 @@ async def test_commands_api_returns_slash_command_metadata(bus: MagicMock) -> No
         await server_task
 
 
+@pytest.mark.asyncio
+async def test_bootstrap_exposes_desktop_surface(bus: MagicMock) -> None:
+    port = 29893
+    channel = WebSocketChannel(
+        {
+            "enabled": True,
+            "allowFrom": ["*"],
+            "host": "127.0.0.1",
+            "port": port,
+            "path": "/ws",
+            "tokenIssueSecret": "desktop-secret",
+            "websocketRequiresToken": True,
+        },
+        bus,
+        runtime_surface="desktop",
+        runtime_capabilities_overrides={"can_pick_folder": True},
+    )
+
+    server_task = asyncio.create_task(channel.start())
+    await asyncio.sleep(0.3)
+
+    try:
+        response = await _http_get(
+            f"http://127.0.0.1:{port}/webui/bootstrap",
+            headers={"X-Nanobot-Auth": "desktop-secret"},
+        )
+        assert response.status_code == 200
+        body = response.json()
+        assert body["runtime_surface"] == "desktop"
+        assert body["runtime_capabilities"]["can_pick_folder"] is True
+        assert body["runtime_capabilities"]["can_restart_engine"] is True
+        assert body["token"].startswith("nbwt_")
+    finally:
+        await channel.stop()
+        await server_task
+
+
 def test_settings_payload_normalizes_camel_case_provider(
     bus: MagicMock,
     monkeypatch,
@@ -1685,6 +1756,26 @@ def test_settings_payload_reports_workspace_sandbox(monkeypatch, tmp_path) -> No
     assert sandbox["enforced"] is True
     assert sandbox["provider"] == "macos_app_sandbox"
     assert sandbox["provider_label"] == "macOS App Sandbox"
+
+
+def test_settings_payload_includes_desktop_runtime_surface(monkeypatch, tmp_path) -> None:
+    config_path = tmp_path / "config.json"
+    save_config(Config(), config_path)
+    monkeypatch.setattr("nanobot.config.loader._current_config_path", config_path)
+
+    body = settings_payload(
+        surface="desktop",
+        runtime_capability_overrides={"can_open_logs": True},
+        restart_required_sections=["runtime"],
+    )
+
+    assert body["surface"] == "desktop"
+    assert body["runtime_surface"] == "desktop"
+    assert body["runtime_capabilities"]["can_open_logs"] is True
+    assert body["runtime_capabilities"]["can_restart_engine"] is True
+    assert body["restart_behavior_by_section"]["runtime"] == "engineRestart"
+    assert body["requires_restart"] is True
+    assert body["apply_state"] == {"status": "pending", "sections": ["runtime"]}
 
 
 def test_update_provider_settings_ignores_api_type_for_non_openai(monkeypatch, tmp_path) -> None:

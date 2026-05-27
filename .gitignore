@@ -7,6 +7,10 @@
 .web
 .orion
 nanobot-desktop/
+desktop/dist/
+desktop/node_modules/
+desktop/release/
+desktop/out/
 
 # Claude / AI assistant artifacts
 docs/superpowers/
