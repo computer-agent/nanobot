@@ -374,7 +374,7 @@ export const ChatList = memo(function ChatList({
                   Math.min(totalSessionCount, limit + VISIBLE_SESSIONS_INCREMENT),
                 )
               }
-              className="h-8 w-full rounded-full text-[12px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent/65 hover:text-sidebar-foreground"
+              className="h-8 w-full rounded-full text-[12px] font-medium text-muted-foreground/65 transition-colors hover:bg-sidebar-accent/65 hover:text-muted-foreground"
             >
               {t("chat.showMore", { count: hiddenSessionCount })}
             </button>
@@ -497,7 +497,7 @@ function ChatsFoldFooter({
       <button
         type="button"
         onClick={onToggle}
-        className="h-7 w-full rounded-xl text-left text-[12px] font-medium text-muted-foreground/58 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+        className="h-7 w-full rounded-xl text-left text-[12px] font-medium text-muted-foreground/65 transition-colors hover:bg-sidebar-accent/50 hover:text-muted-foreground"
       >
         <span className="px-2">
           {folded
