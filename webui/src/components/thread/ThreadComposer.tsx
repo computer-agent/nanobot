@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
-  type ReactNode,
 } from "react";
 
 import { MarkdownText, preloadMarkdownText } from "@/components/MarkdownText";
@@ -20,7 +19,6 @@ import {
 } from "@/components/CliAppMentionText";
 import {
   Activity,
-  AlertTriangle,
   ArrowUp,
   BookOpen,
   Brain,
@@ -28,8 +26,6 @@ import {
   ChevronDown,
   ChevronUp,
   CircleHelp,
-  Folder,
-  Hand,
   History,
   ImageIcon,
   Loader2,
@@ -48,12 +44,9 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+  WorkspaceAccessMenu,
+  WorkspaceProjectPicker,
+} from "@/components/thread/WorkspaceControls";
 import {
   useAttachedImages,
   type AttachedImage,
@@ -69,7 +62,6 @@ import type {
   OutboundCliAppMention,
   OutboundMcpPresetMention,
   SlashCommand,
-  WorkspaceAccessMode,
   WorkspaceScopePayload,
   WorkspacesPayload,
 } from "@/lib/types";
@@ -142,43 +134,6 @@ const SLASH_RECENTS_STORAGE_KEY = "nanobot.webui.slashCommandRecents";
 const SLASH_RECENTS_LIMIT = 5;
 
 type SlashPalettePlacement = "above" | "below";
-
-function scopeWithAccessMode(
-  scope: WorkspaceScopePayload,
-  accessMode: WorkspaceAccessMode,
-): WorkspaceScopePayload {
-  return {
-    ...scope,
-    access_mode: accessMode,
-    restrict_to_workspace: accessMode === "restricted",
-  };
-}
-
-function projectNameFromPath(path: string): string {
-  const normalized = path.replace(/\\/g, "/").replace(/\/+$/, "");
-  return normalized.split("/").filter(Boolean).pop() || path;
-}
-
-function shortPath(path: string): string {
-  const normalized = path.replace(/\\/g, "/");
-  const parts = normalized.split("/").filter(Boolean);
-  if (parts.length <= 3) return path;
-  return `…/${parts.slice(-3).join("/")}`;
-}
-
-function isAbsolutePath(path: string): boolean {
-  const trimmed = path.trim();
-  return trimmed === "~" || trimmed.startsWith("~/") || trimmed.startsWith("~\\")
-    || trimmed.startsWith("/") || /^[A-Za-z]:[\\/]/.test(trimmed);
-}
-
-function selectedProjectScope(
-  scope: WorkspaceScopePayload | null,
-  defaultScope: WorkspaceScopePayload | null,
-): WorkspaceScopePayload | null {
-  if (!scope || !defaultScope) return null;
-  return scope.project_path === defaultScope.project_path ? null : scope;
-}
 
 interface SlashPaletteLayout {
   placement: SlashPalettePlacement;
@@ -543,9 +498,6 @@ export function ThreadComposer({
   const { t } = useTranslation();
   const [value, setValue] = useState("");
   const [inlineError, setInlineError] = useState<string | null>(null);
-  const [projectMenuOpen, setProjectMenuOpen] = useState(false);
-  const [projectPathDraft, setProjectPathDraft] = useState("");
-  const [projectPathError, setProjectPathError] = useState<string | null>(null);
   const [slashMenuDismissed, setSlashMenuDismissed] = useState(false);
   const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
   const [cliAppMenuDismissed, setCliAppMenuDismissed] = useState(false);
@@ -561,10 +513,6 @@ export function ThreadComposer({
   const aspectControlRef = useRef<HTMLDivElement>(null);
   const chipRefs = useRef(new Map<string, HTMLButtonElement>());
   const isHero = variant === "hero";
-  const currentProjectScope = selectedProjectScope(workspaceScope, workspaceDefaultScope);
-  const projectLabel = currentProjectScope
-    ? currentProjectScope.project_name || projectNameFromPath(currentProjectScope.project_path)
-    : t("thread.composer.workspace.projectPlaceholder");
   const showProjectPicker =
     isHero
     && !!workspaceDefaultScope
@@ -588,37 +536,6 @@ export function ThreadComposer({
 
   const { images, enqueue, remove, clear, encoding, full } =
     useAttachedImages();
-
-  useEffect(() => {
-    if (!projectMenuOpen) return;
-    setProjectPathDraft(currentProjectScope?.project_path ?? "");
-    setProjectPathError(null);
-  }, [currentProjectScope?.project_path, projectMenuOpen]);
-
-  useEffect(() => {
-    if (workspaceError && showProjectPicker) setProjectMenuOpen(true);
-  }, [showProjectPicker, workspaceError]);
-
-  const applyProjectPath = useCallback(
-    (projectPath: string, projectName?: string) => {
-      const base = workspaceScope ?? workspaceDefaultScope;
-      const trimmed = projectPath.trim();
-      if (!base || !onWorkspaceScopeChange) return;
-      if (!trimmed || !isAbsolutePath(trimmed)) {
-        setProjectPathError(t("workspace.dialog.absolutePathRequired"));
-        return;
-      }
-      onWorkspaceScopeChange({
-        ...base,
-        project_path: trimmed,
-        project_name: projectName || projectNameFromPath(trimmed),
-        restrict_to_workspace: base.access_mode === "restricted",
-      });
-      setProjectPathError(null);
-      setProjectMenuOpen(false);
-    },
-    [onWorkspaceScopeChange, t, workspaceDefaultScope, workspaceScope],
-  );
 
   const formatRejection = useCallback(
     (reason: AttachmentError): string => {
@@ -1420,104 +1337,15 @@ export function ThreadComposer({
             </Button>
           </div>
         </div>
-        {showProjectPicker ? (
-          <div className="flex items-center border-t border-border/25 bg-muted/60 px-4 py-1.5 dark:bg-white/[0.055]">
-            <DropdownMenu open={projectMenuOpen} onOpenChange={setProjectMenuOpen}>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  disabled={disabled || workspaceScopeDisabled}
-                  aria-label={t("thread.composer.workspace.projectAria")}
-                  className={cn(
-                    "inline-flex h-7 max-w-[18rem] items-center gap-2 rounded-full px-2.5",
-                    "text-[12px] font-medium text-muted-foreground/90 transition-colors",
-                    "hover:bg-background/70 hover:text-foreground disabled:pointer-events-none disabled:opacity-55",
-                    currentProjectScope && "text-foreground/82",
-                  )}
-                >
-                  <Folder className={cn("h-3.5 w-3.5 shrink-0", currentProjectScope && "text-primary")} />
-                  <span className="truncate">{projectLabel}</span>
-                  <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                side="bottom"
-                sideOffset={8}
-                className={cn(
-                  "w-[min(25rem,calc(100vw-2rem))] rounded-[22px] border-border/60 bg-popover/96 p-1.5",
-                  "shadow-[0_18px_55px_rgba(15,23,42,0.18)] backdrop-blur-xl",
-                  "dark:border-white/10 dark:shadow-[0_22px_60px_rgba(0,0,0,0.46)]",
-                )}
-              >
-                {workspaceDefaultScope ? (
-                  <DropdownMenuItem
-                    onSelect={() => applyProjectPath(
-                      workspaceDefaultScope.project_path,
-                      workspaceDefaultScope.project_name,
-                    )}
-                    className="flex min-h-[48px] cursor-default gap-3 rounded-[16px] px-3 py-2.5 focus:bg-muted/55"
-                  >
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[12px] bg-muted text-foreground/80">
-                      <Folder className="h-4 w-4" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-semibold text-foreground">
-                        {t("workspace.dialog.defaultProject")}
-                      </span>
-                      <span className="block truncate text-[11.5px] text-muted-foreground">
-                        {shortPath(workspaceDefaultScope.project_path)}
-                      </span>
-                    </span>
-                    {!currentProjectScope ? <Check className="h-4 w-4 text-foreground/80" /> : null}
-                  </DropdownMenuItem>
-                ) : null}
-                <div className="my-1 h-px bg-border/45" />
-                <div
-                  className="space-y-1.5 px-1.5 py-1.5"
-                  onKeyDown={(event) => {
-                    if (event.key !== "Escape") event.stopPropagation();
-                  }}
-                >
-                  <form
-                    className="flex items-center gap-2"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      applyProjectPath(projectPathDraft);
-                    }}
-                  >
-                    <Input
-                      value={projectPathDraft}
-                      disabled={disabled || workspaceScopeDisabled}
-                      onChange={(event) => {
-                        setProjectPathDraft(event.target.value);
-                        setProjectPathError(null);
-                      }}
-                      placeholder={t("workspace.dialog.manualPlaceholder")}
-                      aria-label={t("workspace.dialog.manual")}
-                      className={cn(
-                        "h-9 rounded-full border-border/55 bg-background/80 px-3 text-[12.5px]",
-                        "focus-visible:ring-1 focus-visible:ring-foreground/10 focus-visible:ring-offset-0",
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      disabled={disabled || workspaceScopeDisabled || !projectPathDraft.trim()}
-                      className="h-9 shrink-0 rounded-full px-3 text-[12px]"
-                    >
-                      {t("workspace.dialog.usePath")}
-                    </Button>
-                  </form>
-                  {projectPathError || workspaceError ? (
-                    <p role="alert" className="px-1 text-[11.5px] font-medium text-destructive">
-                      {projectPathError ?? workspaceError}
-                    </p>
-                  ) : null}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        ) : null}
+        <WorkspaceProjectPicker
+          isHero={isHero}
+          disabled={disabled || workspaceScopeDisabled}
+          scope={workspaceScope}
+          defaultScope={workspaceDefaultScope}
+          controls={workspaceControls}
+          error={workspaceError}
+          onChange={onWorkspaceScopeChange}
+        />
       </div>
     </form>
   );
@@ -1587,111 +1415,6 @@ function ComposerModelBadge({
       </span>
       <span className="truncate">{label}</span>
     </span>
-  );
-}
-
-function WorkspaceAccessMenu({
-  scope,
-  disabled,
-  canUseFullAccess,
-  isHero,
-  onChange,
-}: {
-  scope: WorkspaceScopePayload;
-  disabled?: boolean;
-  canUseFullAccess: boolean;
-  isHero: boolean;
-  onChange?: (scope: WorkspaceScopePayload) => void;
-}) {
-  const { t } = useTranslation();
-  const mode = scope.access_mode;
-  const isFull = mode === "full";
-
-  const setMode = (value: WorkspaceAccessMode) => {
-    if (value === "full" && !canUseFullAccess) return;
-    if (value === mode) return;
-    onChange?.(scopeWithAccessMode(scope, value));
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild disabled={disabled || !onChange}>
-        <Button
-          type="button"
-          variant="ghost"
-          aria-label={t("thread.composer.workspace.accessAria")}
-          className={cn(
-            "max-w-[12.5rem] rounded-[10px] border border-transparent font-semibold shadow-none",
-            isHero ? "h-8 px-2.5 text-[12px]" : "h-9 px-3 text-[12.5px]",
-            isFull
-              ? "bg-transparent text-orange-600 hover:bg-orange-500/8 dark:text-orange-300 dark:hover:bg-orange-400/10"
-              : "bg-transparent text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground dark:hover:bg-white/[0.06]",
-          )}
-        >
-          {isFull ? (
-            <AlertTriangle className={cn("mr-1.5 shrink-0", isHero ? "h-3.5 w-3.5" : "h-3.5 w-3.5")} />
-          ) : (
-            <Hand className={cn("mr-1.5 shrink-0", isHero ? "h-3.5 w-3.5" : "h-3.5 w-3.5")} />
-          )}
-          <span className="truncate">
-            {t(isFull ? "thread.composer.workspace.full" : "thread.composer.workspace.default")}
-          </span>
-          <ChevronDown className={cn("ml-1.5 shrink-0", isHero ? "h-3 w-3" : "h-3 w-3")} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="start"
-        className="w-56 rounded-2xl p-1.5"
-      >
-        <AccessMenuItem
-          icon={<Hand className="h-4 w-4" />}
-          label={t("thread.composer.workspace.default")}
-          selected={mode === "restricted"}
-          onSelect={() => setMode("restricted")}
-        />
-        <AccessMenuItem
-          icon={<AlertTriangle className="h-4 w-4" />}
-          label={t("thread.composer.workspace.full")}
-          selected={mode === "full"}
-          disabled={!canUseFullAccess}
-          warning
-          onSelect={() => setMode("full")}
-        />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function AccessMenuItem({
-  icon,
-  label,
-  selected,
-  disabled,
-  warning,
-  onSelect,
-}: {
-  icon: ReactNode;
-  label: string;
-  selected: boolean;
-  disabled?: boolean;
-  warning?: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <DropdownMenuItem
-      disabled={disabled}
-      onSelect={onSelect}
-      className={cn(
-        "flex h-10 items-center gap-3 rounded-xl px-3 text-[13.5px] font-semibold",
-        warning && "text-orange-600 focus:text-orange-600 dark:text-orange-300 dark:focus:text-orange-300",
-      )}
-    >
-      <span className="grid h-5 w-5 shrink-0 place-items-center text-current" aria-hidden>
-        {icon}
-      </span>
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      {selected ? <Check className="h-4 w-4 shrink-0" aria-hidden /> : null}
-    </DropdownMenuItem>
   );
 }
 
