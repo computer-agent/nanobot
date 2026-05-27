@@ -25,7 +25,9 @@
       "section": "システム",
       "restartHint": "実行時の変更を適用するには nanobot を再起動します。",
       "restart": "nanobot を再起動",
-      "restarting": "再起動中..."
+      "restarting": "再起動中...",
+      "restartEngine": "エンジンを再起動",
+      "restartingEngine": "エンジンを再起動中..."
     },
     "restart": {
       "completed": "{{seconds}} 秒で再起動が完了しました。"
@@ -92,7 +94,8 @@
       "integrations": "Integrations",
       "cliApps": "CLI アプリ",
       "mcp": "MCP サービス",
-      "apps": "アプリ"
+      "apps": "アプリ",
+      "desktop": "デスクトップ"
     },
     "rows": {
       "theme": "テーマ",
@@ -141,7 +144,10 @@
       "currentModel": "現在のモデル",
       "brandLogos": "ブランドロゴ",
       "cliAppsCatalog": "CLI アプリカタログ",
-      "cliAppsFilter": "CLI アプリフィルター"
+      "cliAppsFilter": "CLI アプリフィルター",
+      "engine": "エンジン",
+      "logs": "ログ",
+      "diagnostics": "診断"
     },
     "help": {
       "theme": "ライト表示とダーク表示を切り替えます。",
@@ -174,7 +180,9 @@
       "selectedModelValue": "選択したモデルによって設定されます。",
       "brandLogos": "ロゴはブランドのドメインから読み込まれ、ローカルアイコンにフォールバックします。",
       "cliAppsCatalog": "nanobot がローカルで実行できるアプリ CLI を探します。",
-      "cliAppsFilter": "アプリ、カテゴリ、機能で検索します。"
+      "cliAppsFilter": "アプリ、カテゴリ、機能で検索します。",
+      "logs": "デスクトップエンジンのログフォルダを開きます。",
+      "diagnostics": "サポート用の小さなランタイムレポートを書き出します。"
     },
     "values": {
       "light": "ライト",
@@ -193,7 +201,9 @@
       "on": "On",
       "off": "Off",
       "configured": "Configured",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "pending": "保留中",
+      "restartingEngine": "再起動中"
     },
     "status": {
       "loading": "設定を読み込んでいます...",
@@ -203,14 +213,18 @@
       "savedRestart": "保存しました。反映するには nanobot を再起動してください。",
       "restartAfterSaving": "変更を保存してから、準備ができたら再起動してください。",
       "savedRestartApply": "保存しました。準備ができたら再起動してください。",
-      "imageProviderRestart": "画像プロバイダーの変更を保存しました。準備ができたら再起動してください。"
+      "imageProviderRestart": "画像プロバイダーの変更を保存しました。準備ができたら再起動してください。",
+      "desktopRestartAfterSaving": "保存すると nanobot がエンジンを再起動します。",
+      "desktopRestartPending": "保存しました。準備ができたらエンジンを再起動します。"
     },
     "actions": {
       "save": "保存",
       "saving": "保存中",
       "edit": "編集",
       "cancel": "キャンセル",
-      "openDocs": "Open docs"
+      "openDocs": "Open docs",
+      "open": "開く",
+      "export": "書き出す"
     },
     "byok": {
       "description": "自分の provider キーを使います。Nanobot は現在の config から値を読み込み、設定済みの provider だけを一般設定で選択できます。",
@@ -281,6 +295,7 @@
       "newConfiguration": "新しいモデル設定",
       "newConfigurationHelp": "プロバイダーとモデルをワンクリックの選択肢として保存します。",
       "configurationName": "名前",
+      "configurationNameHelp": "保存済みのモデル設定の名前を変更します。",
       "configurationNamePlaceholder": "高速ライティング"
     },
     "timezone": {
@@ -388,6 +403,19 @@
       "featured": "おすすめ",
       "loading": "アプリを読み込み中...",
       "empty": "このフィルターに一致するアプリはありません。"
+    },
+    "oauth": {
+      "authentication": "OAuth authentication",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signInAgain": "Sign in again",
+      "signOut": "Sign out",
+      "signedInAs": "Signed in as {{account}}",
+      "signInHelp": "Sign in from this device; no API key is stored in config.",
+      "signInRequired": "Sign in required",
+      "signInBeforeSaving": "Sign in before saving this OAuth provider as the active model provider.",
+      "signedIn": "Signed in",
+      "notSignedIn": "Not signed in"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "会話を読み込み中…",
     "empty": {
-      "greeting": "何をお手伝いしましょうか？",
+      "greetings": {
+        "workOn": "一緒に何に取り組みましょうか？",
+        "start": "今日はどこから始めましょう？",
+        "build": "今日は何を作りましょうか？",
+        "tackle": "一緒に何を解決しましょう？"
+      },
       "quickActions": {
         "plan": {
           "title": "プロジェクト計画を作成",
@@ -707,7 +740,8 @@
       "manual": "パスを貼り付け",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine."
+      "absolutePathRequired": "Enter an absolute folder path on this machine.",
+      "chooseFolder": "フォルダを選択..."
     }
   }
 }

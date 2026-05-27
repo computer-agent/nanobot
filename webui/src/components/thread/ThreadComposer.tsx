@@ -1075,10 +1075,15 @@ export function ThreadComposer({
 
   const attachButtonDisabled = disabled || full;
   const showStopButton = isStreaming && !!onStop;
+  const centerHeroPlaceholder =
+    isHero && value.length === 0 && images.length === 0 && !isStreaming;
   const inputTextClasses = cn(
     "w-full resize-none bg-transparent",
     isHero
-      ? "min-h-[70px] px-5 pb-1.5 pt-4 text-[15px] leading-6"
+      ? cn(
+          "min-h-[78px] px-5 text-[15px] leading-6",
+          centerHeroPlaceholder ? "pb-2 pt-[27px]" : "pb-1.5 pt-4",
+        )
       : "min-h-[50px] px-4 pb-1.5 pt-3 text-[13.5px] leading-5",
   );
 

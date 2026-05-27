@@ -25,7 +25,9 @@
       "section": "系統",
       "restartHint": "重新啟動 nanobot 以套用執行階段變更。",
       "restart": "重新啟動 nanobot",
-      "restarting": "正在重新啟動..."
+      "restarting": "正在重新啟動...",
+      "restartEngine": "重新啟動引擎",
+      "restartingEngine": "正在重新啟動引擎..."
     },
     "restart": {
       "completed": "重新啟動已完成，耗時 {{seconds}} 秒。"
@@ -92,7 +94,8 @@
       "integrations": "Integrations",
       "cliApps": "CLI 應用",
       "mcp": "MCP 服務",
-      "apps": "應用"
+      "apps": "應用",
+      "desktop": "桌面端"
     },
     "rows": {
       "theme": "主題",
@@ -141,7 +144,10 @@
       "currentModel": "目前模型",
       "brandLogos": "品牌標誌",
       "cliAppsCatalog": "CLI 應用目錄",
-      "cliAppsFilter": "CLI 應用篩選"
+      "cliAppsFilter": "CLI 應用篩選",
+      "engine": "引擎",
+      "logs": "日誌",
+      "diagnostics": "診斷"
     },
     "help": {
       "theme": "在淺色與深色外觀之間切換。",
@@ -174,7 +180,9 @@
       "selectedModelValue": "由目前模型決定。",
       "brandLogos": "標誌會從品牌網域載入，並提供本地圖示作為備援。",
       "cliAppsCatalog": "瀏覽 nanobot 可在本機執行的應用 CLI。",
-      "cliAppsFilter": "按應用、分類或能力搜尋。"
+      "cliAppsFilter": "按應用、分類或能力搜尋。",
+      "logs": "開啟桌面端引擎日誌資料夾。",
+      "diagnostics": "匯出一份供支援排查用的執行階段報告。"
     },
     "values": {
       "light": "淺色",
@@ -193,7 +201,9 @@
       "on": "On",
       "off": "Off",
       "configured": "Configured",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "pending": "待套用",
+      "restartingEngine": "正在重新啟動"
     },
     "status": {
       "loading": "正在載入設定...",
@@ -203,14 +213,18 @@
       "savedRestart": "已儲存。重新啟動 nanobot 後生效。",
       "restartAfterSaving": "儲存變更後，可在準備好時重新啟動。",
       "savedRestartApply": "已儲存，可在準備好時重新啟動。",
-      "imageProviderRestart": "圖片服務商變更已儲存，可在準備好時重新啟動。"
+      "imageProviderRestart": "圖片服務商變更已儲存，可在準備好時重新啟動。",
+      "desktopRestartAfterSaving": "儲存後，nanobot 會自動重新啟動引擎。",
+      "desktopRestartPending": "已儲存，將在適當時重新啟動引擎。"
     },
     "actions": {
       "save": "儲存",
       "saving": "儲存中",
       "edit": "編輯",
       "cancel": "取消",
-      "openDocs": "Open docs"
+      "openDocs": "Open docs",
+      "open": "開啟",
+      "export": "匯出"
     },
     "byok": {
       "description": "自帶 provider key。Nanobot 會從目前 config 讀取這些值，只有已設定的 provider 才能在一般設定中選擇。",
@@ -281,6 +295,7 @@
       "newConfiguration": "新增模型設定",
       "newConfigurationHelp": "把服務商和模型儲存為一個可直接切換的選項。",
       "configurationName": "名稱",
+      "configurationNameHelp": "重新命名這個已儲存的模型配置。",
       "configurationNamePlaceholder": "快速寫作"
     },
     "timezone": {
@@ -388,6 +403,19 @@
       "featured": "精選",
       "loading": "正在載入應用...",
       "empty": "沒有符合篩選條件的應用。"
+    },
+    "oauth": {
+      "authentication": "OAuth 驗證",
+      "signIn": "登入",
+      "signingIn": "正在登入…",
+      "signInAgain": "重新登入",
+      "signOut": "登出",
+      "signedInAs": "已登入為 {{account}}",
+      "signInHelp": "在這台裝置上登入；不會把 API key 寫入設定。",
+      "signInRequired": "需要登入",
+      "signInBeforeSaving": "請先登入這個 OAuth 提供商，再儲存為目前模型提供商。",
+      "signedIn": "已登入",
+      "notSignedIn": "未登入"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "正在載入對話…",
     "empty": {
-      "greeting": "我可以幫你做什麼？",
+      "greetings": {
+        "workOn": "我們要一起做點什麼？",
+        "start": "今天從哪裡開始？",
+        "build": "今天一起構建什麼？",
+        "tackle": "我們要一起解決什麼？"
+      },
       "quickActions": {
         "plan": {
           "title": "建立專案計畫",
@@ -707,7 +740,8 @@
       "manual": "貼上路徑",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "使用路徑",
-      "absolutePathRequired": "請輸入這台機器上的絕對資料夾路徑。"
+      "absolutePathRequired": "請輸入這台機器上的絕對資料夾路徑。",
+      "chooseFolder": "選擇資料夾..."
     }
   }
 }

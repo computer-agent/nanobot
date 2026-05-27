@@ -25,7 +25,9 @@
       "section": "Sistem",
       "restartHint": "Mulai ulang nanobot untuk menerapkan perubahan runtime.",
       "restart": "Mulai ulang nanobot",
-      "restarting": "Memulai ulang..."
+      "restarting": "Memulai ulang...",
+      "restartEngine": "Mulai ulang engine",
+      "restartingEngine": "Memulai ulang engine..."
     },
     "restart": {
       "completed": "Mulai ulang selesai dalam {{seconds}} dtk."
@@ -92,7 +94,8 @@
       "integrations": "Integrations",
       "cliApps": "App CLI",
       "mcp": "Layanan MCP",
-      "apps": "Aplikasi"
+      "apps": "Aplikasi",
+      "desktop": "Desktop"
     },
     "rows": {
       "theme": "Tema",
@@ -141,7 +144,10 @@
       "currentModel": "Model saat ini",
       "brandLogos": "Logo merek",
       "cliAppsCatalog": "Katalog aplikasi CLI",
-      "cliAppsFilter": "Filter aplikasi CLI"
+      "cliAppsFilter": "Filter aplikasi CLI",
+      "engine": "Engine",
+      "logs": "Log",
+      "diagnostics": "Diagnostik"
     },
     "help": {
       "theme": "Beralih antara tampilan terang dan gelap.",
@@ -174,7 +180,9 @@
       "selectedModelValue": "Ditentukan oleh model yang dipilih.",
       "brandLogos": "Logo dimuat dari domain merek dengan ikon lokal sebagai cadangan.",
       "cliAppsCatalog": "Jelajahi CLI aplikasi yang dapat dijalankan nanobot secara lokal.",
-      "cliAppsFilter": "Cari berdasarkan aplikasi, kategori, atau kemampuan."
+      "cliAppsFilter": "Cari berdasarkan aplikasi, kategori, atau kemampuan.",
+      "logs": "Buka folder log engine desktop.",
+      "diagnostics": "Ekspor laporan runtime kecil untuk dukungan."
     },
     "values": {
       "light": "Terang",
@@ -193,7 +201,9 @@
       "on": "On",
       "off": "Off",
       "configured": "Configured",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "pending": "Tertunda",
+      "restartingEngine": "Memulai ulang"
     },
     "status": {
       "loading": "Memuat pengaturan...",
@@ -203,14 +213,18 @@
       "savedRestart": "Tersimpan. Mulai ulang nanobot untuk menerapkan.",
       "restartAfterSaving": "Simpan perubahan, lalu restart saat siap.",
       "savedRestartApply": "Tersimpan. Restart saat siap.",
-      "imageProviderRestart": "Perubahan penyedia gambar tersimpan. Restart saat siap."
+      "imageProviderRestart": "Perubahan penyedia gambar tersimpan. Restart saat siap.",
+      "desktopRestartAfterSaving": "Simpan perubahan dan nanobot akan memulai ulang engine.",
+      "desktopRestartPending": "Tersimpan. Engine akan dimulai ulang saat siap."
     },
     "actions": {
       "save": "Simpan",
       "saving": "Menyimpan",
       "edit": "Edit",
       "cancel": "Batal",
-      "openDocs": "Open docs"
+      "openDocs": "Open docs",
+      "open": "Buka",
+      "export": "Ekspor"
     },
     "byok": {
       "description": "Gunakan kunci provider Anda sendiri. Nanobot membaca nilai ini dari config saat ini, dan hanya provider yang sudah dikonfigurasi yang bisa dipilih di Umum.",
@@ -281,6 +295,7 @@
       "newConfiguration": "Konfigurasi model baru",
       "newConfigurationHelp": "Simpan penyedia dan model sebagai opsi sekali klik.",
       "configurationName": "Nama",
+      "configurationNameHelp": "Ganti nama konfigurasi model yang tersimpan ini.",
       "configurationNamePlaceholder": "Penulisan cepat"
     },
     "timezone": {
@@ -388,6 +403,19 @@
       "featured": "Unggulan",
       "loading": "Memuat aplikasi...",
       "empty": "Tidak ada aplikasi yang cocok dengan filter ini."
+    },
+    "oauth": {
+      "authentication": "OAuth authentication",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signInAgain": "Sign in again",
+      "signOut": "Sign out",
+      "signedInAs": "Signed in as {{account}}",
+      "signInHelp": "Sign in from this device; no API key is stored in config.",
+      "signInRequired": "Sign in required",
+      "signInBeforeSaving": "Sign in before saving this OAuth provider as the active model provider.",
+      "signedIn": "Signed in",
+      "notSignedIn": "Not signed in"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "Memuat percakapan…",
     "empty": {
-      "greeting": "Apa yang bisa saya bantu?",
+      "greetings": {
+        "workOn": "Apa yang kita kerjakan bersama?",
+        "start": "Kita mulai dari mana?",
+        "build": "Apa yang kita bangun hari ini?",
+        "tackle": "Apa yang kita selesaikan bersama?"
+      },
       "quickActions": {
         "plan": {
           "title": "Buat rencana proyek",
@@ -707,7 +740,8 @@
       "manual": "Tempel path",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine."
+      "absolutePathRequired": "Enter an absolute folder path on this machine.",
+      "chooseFolder": "Pilih folder..."
     }
   }
 }

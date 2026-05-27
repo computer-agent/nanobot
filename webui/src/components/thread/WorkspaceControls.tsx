@@ -15,6 +15,7 @@ import type {
   WorkspaceScopePayload,
   WorkspacesPayload,
 } from "@/lib/types";
+import { getDesktopApi } from "@/lib/desktop";
 import { cn } from "@/lib/utils";
 import {
   isAbsoluteWorkspacePath,
@@ -45,6 +46,7 @@ export function WorkspaceProjectPicker({
   const [open, setOpen] = useState(false);
   const [pathDraft, setPathDraft] = useState("");
   const [pathError, setPathError] = useState<string | null>(null);
+  const [pickingFolder, setPickingFolder] = useState(false);
   const currentProjectScope = selectedProjectScope(scope, defaultScope);
   const projectLabel = currentProjectScope
     ? currentProjectScope.project_name || projectNameFromPath(currentProjectScope.project_path)
@@ -84,6 +86,20 @@ export function WorkspaceProjectPicker({
     },
     [defaultScope, onChange, scope, t],
   );
+
+  const pickNativeFolder = useCallback(async () => {
+    const desktop = getDesktopApi();
+    if (!desktop || disabled) return;
+    setPickingFolder(true);
+    try {
+      const picked = await desktop.pickFolder();
+      if (picked) applyProjectPath(picked);
+    } catch (err) {
+      setPathError((err as Error).message);
+    } finally {
+      setPickingFolder(false);
+    }
+  }, [applyProjectPath, disabled]);
 
   if (!visible || !defaultScope || !onChange) return null;
 
@@ -135,6 +151,23 @@ export function WorkspaceProjectPicker({
             {!currentProjectScope ? <Check className="h-4 w-4 text-foreground/80" /> : null}
           </DropdownMenuItem>
           <div className="my-1 h-px bg-border/45" />
+          {getDesktopApi() ? (
+            <DropdownMenuItem
+              onSelect={(event) => {
+                event.preventDefault();
+                void pickNativeFolder();
+              }}
+              disabled={disabled || pickingFolder}
+              className="flex min-h-[44px] cursor-default gap-3 rounded-[16px] px-3 py-2 focus:bg-muted/55"
+            >
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[12px] bg-muted text-foreground/80">
+                <Folder className="h-4 w-4" />
+              </span>
+              <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-foreground">
+                {t("workspace.dialog.chooseFolder")}
+              </span>
+            </DropdownMenuItem>
+          ) : null}
           <div
             className="space-y-1.5 px-1.5 py-1.5"
             onKeyDown={(event) => {

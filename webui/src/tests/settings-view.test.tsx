@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { SettingsView } from "@/components/settings/SettingsView";
 import { ClientProvider } from "@/providers/ClientProvider";
+import type { SettingsPayload } from "@/lib/types";
 
 function jsonResponse(body: unknown): Response {
   return {
@@ -12,7 +13,7 @@ function jsonResponse(body: unknown): Response {
   } as Response;
 }
 
-function settingsPayload() {
+function settingsPayload(): SettingsPayload {
   return {
     agent: {
       model: "openai/gpt-4o",
@@ -115,7 +116,7 @@ const installedAnyGen = {
   skill_installed: true,
 };
 
-function renderSettingsView() {
+function renderSettingsView(options: { onSettingsChange?: (payload: SettingsPayload) => void } = {}) {
   render(
     <ClientProvider client={{} as never} token="tok">
       <SettingsView
@@ -124,6 +125,7 @@ function renderSettingsView() {
         onToggleTheme={() => {}}
         onBackToChat={() => {}}
         onModelNameChange={() => {}}
+        onSettingsChange={options.onSettingsChange}
       />
     </ClientProvider>,
   );
@@ -187,5 +189,28 @@ describe("SettingsView Apps catalog", () => {
     fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
 
     expect(screen.queryByText("Uninstalled CLI for AnyGen.")).not.toBeInTheDocument();
+  });
+
+  it("publishes the latest settings payload to the shell", async () => {
+    const payload = settingsPayload();
+    const onSettingsChange = vi.fn();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url === "/api/settings") return jsonResponse(payload);
+        if (url === "/api/settings/cli-apps") {
+          return jsonResponse({ apps: [], installed_count: 0 });
+        }
+        if (url === "/api/settings/mcp-presets") {
+          return jsonResponse({ presets: [], installed_count: 0 });
+        }
+        return { ok: false, status: 404, json: async () => ({}) } as Response;
+      }),
+    );
+
+    renderSettingsView({ onSettingsChange });
+
+    await waitFor(() => expect(onSettingsChange).toHaveBeenCalledWith(payload));
   });
 });

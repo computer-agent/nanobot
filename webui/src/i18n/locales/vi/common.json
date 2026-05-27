@@ -25,7 +25,9 @@
       "section": "Hệ thống",
       "restartHint": "Khởi động lại nanobot để áp dụng thay đổi runtime.",
       "restart": "Khởi động lại nanobot",
-      "restarting": "Đang khởi động lại..."
+      "restarting": "Đang khởi động lại...",
+      "restartEngine": "Khởi động lại engine",
+      "restartingEngine": "Đang khởi động lại engine..."
     },
     "restart": {
       "completed": "Khởi động lại hoàn tất sau {{seconds}} giây."
@@ -92,7 +94,8 @@
       "integrations": "Integrations",
       "cliApps": "Ứng dụng CLI",
       "mcp": "Dịch vụ MCP",
-      "apps": "Ứng dụng"
+      "apps": "Ứng dụng",
+      "desktop": "Desktop"
     },
     "rows": {
       "theme": "Giao diện",
@@ -141,7 +144,10 @@
       "currentModel": "Mô hình hiện tại",
       "brandLogos": "Logo thương hiệu",
       "cliAppsCatalog": "Danh mục ứng dụng CLI",
-      "cliAppsFilter": "Bộ lọc ứng dụng CLI"
+      "cliAppsFilter": "Bộ lọc ứng dụng CLI",
+      "engine": "Engine",
+      "logs": "Nhật ký",
+      "diagnostics": "Chẩn đoán"
     },
     "help": {
       "theme": "Chuyển giữa giao diện sáng và tối.",
@@ -174,7 +180,9 @@
       "selectedModelValue": "Được đặt bởi mô hình đã chọn.",
       "brandLogos": "Logo được tải từ tên miền thương hiệu, có biểu tượng cục bộ làm dự phòng.",
       "cliAppsCatalog": "Duyệt các CLI ứng dụng mà nanobot có thể chạy cục bộ.",
-      "cliAppsFilter": "Tìm theo ứng dụng, danh mục hoặc khả năng."
+      "cliAppsFilter": "Tìm theo ứng dụng, danh mục hoặc khả năng.",
+      "logs": "Mở thư mục nhật ký engine desktop.",
+      "diagnostics": "Xuất báo cáo runtime nhỏ để hỗ trợ."
     },
     "values": {
       "light": "Sáng",
@@ -193,7 +201,9 @@
       "on": "On",
       "off": "Off",
       "configured": "Configured",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "pending": "Đang chờ",
+      "restartingEngine": "Đang khởi động lại"
     },
     "status": {
       "loading": "Đang tải cài đặt...",
@@ -203,14 +213,18 @@
       "savedRestart": "Đã lưu. Khởi động lại nanobot để áp dụng.",
       "restartAfterSaving": "Lưu thay đổi, rồi khởi động lại khi sẵn sàng.",
       "savedRestartApply": "Đã lưu. Khởi động lại khi sẵn sàng.",
-      "imageProviderRestart": "Đã lưu thay đổi nhà cung cấp ảnh. Khởi động lại khi sẵn sàng."
+      "imageProviderRestart": "Đã lưu thay đổi nhà cung cấp ảnh. Khởi động lại khi sẵn sàng.",
+      "desktopRestartAfterSaving": "Lưu thay đổi và nanobot sẽ khởi động lại engine.",
+      "desktopRestartPending": "Đã lưu. Sẽ khởi động lại engine khi sẵn sàng."
     },
     "actions": {
       "save": "Lưu",
       "saving": "Đang lưu",
       "edit": "Sửa",
       "cancel": "Hủy",
-      "openDocs": "Open docs"
+      "openDocs": "Open docs",
+      "open": "Mở",
+      "export": "Xuất"
     },
     "byok": {
       "description": "Dùng key provider của riêng bạn. Nanobot đọc các giá trị này từ config hiện tại, và chỉ provider đã cấu hình mới có thể chọn trong Chung.",
@@ -281,6 +295,7 @@
       "newConfiguration": "Cấu hình mô hình mới",
       "newConfigurationHelp": "Lưu nhà cung cấp và mô hình thành một lựa chọn một lần nhấp.",
       "configurationName": "Tên",
+      "configurationNameHelp": "Đổi tên cấu hình mô hình đã lưu này.",
       "configurationNamePlaceholder": "Viết nhanh"
     },
     "timezone": {
@@ -388,6 +403,19 @@
       "featured": "Nổi bật",
       "loading": "Đang tải ứng dụng...",
       "empty": "Không có ứng dụng nào khớp với bộ lọc này."
+    },
+    "oauth": {
+      "authentication": "OAuth authentication",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signInAgain": "Sign in again",
+      "signOut": "Sign out",
+      "signedInAs": "Signed in as {{account}}",
+      "signInHelp": "Sign in from this device; no API key is stored in config.",
+      "signInRequired": "Sign in required",
+      "signInBeforeSaving": "Sign in before saving this OAuth provider as the active model provider.",
+      "signedIn": "Signed in",
+      "notSignedIn": "Not signed in"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "Đang tải cuộc trò chuyện…",
     "empty": {
-      "greeting": "Tôi có thể giúp gì cho bạn?",
+      "greetings": {
+        "workOn": "Mình cùng làm gì tiếp?",
+        "start": "Hôm nay bắt đầu từ đâu?",
+        "build": "Hôm nay mình xây dựng gì?",
+        "tackle": "Mình cùng xử lý việc gì?"
+      },
       "quickActions": {
         "plan": {
           "title": "Tạo kế hoạch dự án",
@@ -707,7 +740,8 @@
       "manual": "Dán đường dẫn",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine."
+      "absolutePathRequired": "Enter an absolute folder path on this machine.",
+      "chooseFolder": "Chọn thư mục..."
     }
   }
 }

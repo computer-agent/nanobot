@@ -207,9 +207,36 @@ export interface BootstrapResponse {
   ws_url?: string | null;
   expires_in: number;
   model_name?: string | null;
+  runtime_surface?: RuntimeSurface;
+  runtime_capabilities?: RuntimeCapabilities;
+}
+
+export type RuntimeSurface = "web" | "desktop";
+export type RestartBehavior = "none" | "nextTurn" | "engineRestart" | "appRestart";
+export type SettingsApplyStatus =
+  | "idle"
+  | "pending"
+  | "applying"
+  | "restarting_engine"
+  | "requires_app_restart";
+
+export interface RuntimeCapabilities {
+  can_restart_engine: boolean;
+  can_pick_folder: boolean;
+  can_auto_update: boolean;
+  can_open_logs: boolean;
+  can_export_diagnostics: boolean;
 }
 
 export interface SettingsPayload {
+  surface?: RuntimeSurface;
+  runtime_surface?: RuntimeSurface;
+  runtime_capabilities?: RuntimeCapabilities;
+  apply_state?: {
+    status: SettingsApplyStatus;
+    sections: string[];
+  };
+  restart_behavior_by_section?: Record<string, RestartBehavior>;
   agent: {
     model: string;
     provider: string;
@@ -241,11 +268,15 @@ export interface SettingsPayload {
     name: string;
     label: string;
     configured: boolean;
+    auth_type?: "api_key" | "oauth";
     api_key_required?: boolean;
     api_key_hint?: string | null;
     api_base?: string | null;
     default_api_base?: string | null;
     api_type?: "auto" | "chat_completions" | "responses";
+    oauth_account?: string | null;
+    oauth_expires_at?: number | null;
+    oauth_login_supported?: boolean;
   }>;
   web_search: {
     provider: string;
@@ -284,6 +315,7 @@ export interface SettingsPayload {
       name: string;
       label: string;
       configured: boolean;
+      auth_type?: "api_key" | "oauth";
       api_key_hint?: string | null;
       api_base?: string | null;
       default_api_base?: string | null;
@@ -499,6 +531,13 @@ export interface ModelConfigurationCreate {
   label: string;
   provider: string;
   model: string;
+}
+
+export interface ModelConfigurationUpdate {
+  name: string;
+  label?: string;
+  provider?: string;
+  model?: string;
 }
 
 export interface ProviderSettingsUpdate {

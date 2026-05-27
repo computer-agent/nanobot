@@ -12,6 +12,8 @@ const updateUrlSpy = vi.fn();
 const attachSpy = vi.fn();
 const runStatusHandlers = new Set<(chatId: string, startedAt: number | null) => void>();
 let mockSessions: ChatSummary[] = [];
+const HERO_GREETING_PATTERN =
+  /What should we work on\?|Where should we start\?|What are we building today\?|What should we tackle together\?/;
 
 function jsonResponse(body: unknown): Response {
   return {
@@ -1075,7 +1077,7 @@ describe("App layout", () => {
     fireEvent.click(screen.getByRole("button", { name: "Back to chat" }));
 
     await waitFor(() => expect(document.title).toBe("nanobot"));
-    expect(screen.getByText("What can I do for you?")).toBeInTheDocument();
+    expect(screen.getByText(HERO_GREETING_PATTERN)).toBeInTheDocument();
   });
 
   it("filters sessions in the centered search dialog", async () => {
@@ -1260,7 +1262,7 @@ describe("App layout", () => {
     const sidebar = screen.getByRole("navigation", { name: "Sidebar navigation" });
     fireEvent.click(within(sidebar).getByRole("button", { name: "New chat" }));
     expect(createChatSpy).not.toHaveBeenCalled();
-    expect(screen.getByText("What can I do for you?")).toBeInTheDocument();
+    expect(screen.getByText(HERO_GREETING_PATTERN)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Start a new chat" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Toggle theme from header" })).toBeInTheDocument();
     expect(within(sidebar).getByRole("button", { name: "Settings" })).toBeInTheDocument();

@@ -11,11 +11,14 @@ import {
   importMcpConfig,
   listSessions,
   listSlashCommands,
+  loginProviderOAuth,
+  logoutProviderOAuth,
   runCliAppAction,
   runMcpPresetAction,
   saveCustomMcpServer,
   updateSidebarState,
   updateImageGenerationSettings,
+  updateModelConfiguration,
   updateMcpServerTools,
   updateProviderSettings,
   updateSettings,
@@ -90,6 +93,44 @@ describe("webui API helpers", () => {
     );
   });
 
+  it("serializes model configuration updates", async () => {
+    await updateModelConfiguration("tok", {
+      name: "codex",
+      label: "Codex",
+      provider: "openai_codex",
+      model: "openai-codex/gpt-5.5",
+    });
+
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/settings/model-configurations/update?name=codex&label=Codex&provider=openai_codex&model=openai-codex%2Fgpt-5.5",
+      expect.objectContaining({
+        headers: { Authorization: "Bearer tok" },
+      }),
+    );
+  });
+
+  it("reports HTML API fallbacks as gateway mismatch errors", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: new Headers({ "content-type": "text/html; charset=utf-8" }),
+        text: async () => "<!doctype html><html></html>",
+      }),
+    );
+
+    await expect(
+      updateModelConfiguration("tok", {
+        name: "codex",
+        model: "openai-codex/gpt-5.5",
+      }),
+    ).rejects.toMatchObject({
+      status: 200,
+      message: "Gateway returned WebUI HTML instead of JSON. Restart nanobot gateway and try again.",
+    });
+  });
+
   it("serializes provider settings updates without returning secrets", async () => {
     await updateProviderSettings("tok", {
       provider: "openrouter",
@@ -99,6 +140,24 @@ describe("webui API helpers", () => {
 
     expect(fetch).toHaveBeenCalledWith(
       "/api/settings/provider/update?provider=openrouter&api_key=sk-or-test&api_base=https%3A%2F%2Fopenrouter.ai%2Fapi%2Fv1",
+      expect.objectContaining({
+        headers: { Authorization: "Bearer tok" },
+      }),
+    );
+  });
+
+  it("serializes provider OAuth login and logout actions", async () => {
+    await loginProviderOAuth("tok", "openai_codex");
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/settings/provider/oauth-login?provider=openai_codex",
+      expect.objectContaining({
+        headers: { Authorization: "Bearer tok" },
+      }),
+    );
+
+    await logoutProviderOAuth("tok", "openai_codex");
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/settings/provider/oauth-logout?provider=openai_codex",
       expect.objectContaining({
         headers: { Authorization: "Bearer tok" },
       }),

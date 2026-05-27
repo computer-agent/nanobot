@@ -25,7 +25,9 @@
       "section": "시스템",
       "restartHint": "런타임 변경 사항을 적용하려면 nanobot을 다시 시작하세요.",
       "restart": "nanobot 다시 시작",
-      "restarting": "다시 시작 중..."
+      "restarting": "다시 시작 중...",
+      "restartEngine": "엔진 다시 시작",
+      "restartingEngine": "엔진 다시 시작 중..."
     },
     "restart": {
       "completed": "{{seconds}}초 만에 다시 시작되었습니다."
@@ -92,7 +94,8 @@
       "integrations": "Integrations",
       "cliApps": "CLI 앱",
       "mcp": "MCP 서비스",
-      "apps": "앱"
+      "apps": "앱",
+      "desktop": "데스크톱"
     },
     "rows": {
       "theme": "테마",
@@ -141,7 +144,10 @@
       "currentModel": "현재 모델",
       "brandLogos": "브랜드 로고",
       "cliAppsCatalog": "CLI 앱 카탈로그",
-      "cliAppsFilter": "CLI 앱 필터"
+      "cliAppsFilter": "CLI 앱 필터",
+      "engine": "엔진",
+      "logs": "로그",
+      "diagnostics": "진단"
     },
     "help": {
       "theme": "밝은 모드와 어두운 모드를 전환합니다.",
@@ -174,7 +180,9 @@
       "selectedModelValue": "선택한 모델에서 설정됩니다.",
       "brandLogos": "로고는 브랜드 도메인에서 불러오며, 실패하면 로컬 아이콘을 사용합니다.",
       "cliAppsCatalog": "nanobot이 로컬에서 실행할 수 있는 앱 CLI를 살펴봅니다.",
-      "cliAppsFilter": "앱, 카테고리 또는 기능으로 검색합니다."
+      "cliAppsFilter": "앱, 카테고리 또는 기능으로 검색합니다.",
+      "logs": "데스크톱 엔진 로그 폴더를 엽니다.",
+      "diagnostics": "지원용 작은 런타임 보고서를 내보냅니다."
     },
     "values": {
       "light": "라이트",
@@ -193,7 +201,9 @@
       "on": "On",
       "off": "Off",
       "configured": "Configured",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "pending": "대기 중",
+      "restartingEngine": "다시 시작 중"
     },
     "status": {
       "loading": "설정을 불러오는 중...",
@@ -203,14 +213,18 @@
       "savedRestart": "저장되었습니다. 적용하려면 nanobot을 재시작하세요.",
       "restartAfterSaving": "변경 사항을 저장한 뒤 준비되면 재시작하세요.",
       "savedRestartApply": "저장되었습니다. 준비되면 재시작하세요.",
-      "imageProviderRestart": "이미지 제공자 변경 사항이 저장되었습니다. 준비되면 재시작하세요."
+      "imageProviderRestart": "이미지 제공자 변경 사항이 저장되었습니다. 준비되면 재시작하세요.",
+      "desktopRestartAfterSaving": "저장하면 nanobot이 엔진을 다시 시작합니다.",
+      "desktopRestartPending": "저장되었습니다. 준비되면 엔진을 다시 시작합니다."
     },
     "actions": {
       "save": "저장",
       "saving": "저장 중",
       "edit": "편집",
       "cancel": "취소",
-      "openDocs": "Open docs"
+      "openDocs": "Open docs",
+      "open": "열기",
+      "export": "내보내기"
     },
     "byok": {
       "description": "직접 provider 키를 가져옵니다. Nanobot은 현재 config에서 값을 읽고, 설정된 provider만 일반 설정에서 선택할 수 있습니다.",
@@ -281,6 +295,7 @@
       "newConfiguration": "새 모델 구성",
       "newConfigurationHelp": "제공자와 모델을 한 번에 선택할 수 있는 옵션으로 저장합니다.",
       "configurationName": "이름",
+      "configurationNameHelp": "저장된 모델 구성의 이름을 변경합니다.",
       "configurationNamePlaceholder": "빠른 글쓰기"
     },
     "timezone": {
@@ -388,6 +403,19 @@
       "featured": "추천",
       "loading": "앱 불러오는 중...",
       "empty": "이 필터와 일치하는 앱이 없습니다."
+    },
+    "oauth": {
+      "authentication": "OAuth authentication",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signInAgain": "Sign in again",
+      "signOut": "Sign out",
+      "signedInAs": "Signed in as {{account}}",
+      "signInHelp": "Sign in from this device; no API key is stored in config.",
+      "signInRequired": "Sign in required",
+      "signInBeforeSaving": "Sign in before saving this OAuth provider as the active model provider.",
+      "signedIn": "Signed in",
+      "notSignedIn": "Not signed in"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "대화 불러오는 중…",
     "empty": {
-      "greeting": "무엇을 도와드릴까요?",
+      "greetings": {
+        "workOn": "우리 무엇을 함께 해볼까요?",
+        "start": "오늘은 어디서 시작할까요?",
+        "build": "오늘은 무엇을 만들어볼까요?",
+        "tackle": "함께 무엇을 해결할까요?"
+      },
       "quickActions": {
         "plan": {
           "title": "프로젝트 계획 만들기",
@@ -707,7 +740,8 @@
       "manual": "경로 붙여넣기",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine."
+      "absolutePathRequired": "Enter an absolute folder path on this machine.",
+      "chooseFolder": "폴더 선택..."
     }
   }
 }

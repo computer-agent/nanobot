@@ -25,7 +25,9 @@
       "section": "Système",
       "restartHint": "Redémarrez nanobot pour appliquer les changements d’exécution.",
       "restart": "Redémarrer nanobot",
-      "restarting": "Redémarrage..."
+      "restarting": "Redémarrage...",
+      "restartEngine": "Redémarrer le moteur",
+      "restartingEngine": "Redémarrage du moteur..."
     },
     "restart": {
       "completed": "Redémarrage terminé en {{seconds}} s."
@@ -92,7 +94,8 @@
       "integrations": "Integrations",
       "cliApps": "Apps CLI",
       "mcp": "Services MCP",
-      "apps": "Apps"
+      "apps": "Apps",
+      "desktop": "Bureau"
     },
     "rows": {
       "theme": "Thème",
@@ -141,7 +144,10 @@
       "currentModel": "Modèle actuel",
       "brandLogos": "Logos de marque",
       "cliAppsCatalog": "Catalogue d'apps CLI",
-      "cliAppsFilter": "Filtre des apps CLI"
+      "cliAppsFilter": "Filtre des apps CLI",
+      "engine": "Moteur",
+      "logs": "Journaux",
+      "diagnostics": "Diagnostics"
     },
     "help": {
       "theme": "Basculer entre les apparences claire et sombre.",
@@ -174,7 +180,9 @@
       "selectedModelValue": "Défini par le modèle sélectionné.",
       "brandLogos": "Les logos sont chargés depuis les domaines des marques avec une icône locale en secours.",
       "cliAppsCatalog": "Parcourez les CLIs d'apps que nanobot peut exécuter localement.",
-      "cliAppsFilter": "Recherchez par app, catégorie ou capacité."
+      "cliAppsFilter": "Recherchez par app, catégorie ou capacité.",
+      "logs": "Ouvrir le dossier des journaux du moteur desktop.",
+      "diagnostics": "Exporter un petit rapport runtime pour le support."
     },
     "values": {
       "light": "Clair",
@@ -193,7 +201,9 @@
       "on": "On",
       "off": "Off",
       "configured": "Configured",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "pending": "En attente",
+      "restartingEngine": "Redémarrage"
     },
     "status": {
       "loading": "Chargement des paramètres...",
@@ -203,14 +213,18 @@
       "savedRestart": "Enregistré. Redémarrez nanobot pour appliquer.",
       "restartAfterSaving": "Enregistrez les modifications, puis redémarrez lorsque vous êtes prêt.",
       "savedRestartApply": "Enregistré. Redémarrez lorsque vous êtes prêt.",
-      "imageProviderRestart": "Modifications du fournisseur d’images enregistrées. Redémarrez lorsque vous êtes prêt."
+      "imageProviderRestart": "Modifications du fournisseur d’images enregistrées. Redémarrez lorsque vous êtes prêt.",
+      "desktopRestartAfterSaving": "Enregistrez les changements et nanobot redémarrera son moteur.",
+      "desktopRestartPending": "Enregistré. Redémarrage du moteur quand il sera prêt."
     },
     "actions": {
       "save": "Enregistrer",
       "saving": "Enregistrement",
       "edit": "Modifier",
       "cancel": "Annuler",
-      "openDocs": "Open docs"
+      "openDocs": "Open docs",
+      "open": "Ouvrir",
+      "export": "Exporter"
     },
     "byok": {
       "description": "Utilisez vos propres clés de fournisseur. Nanobot lit ces valeurs depuis la configuration actuelle, et seuls les fournisseurs configurés peuvent être sélectionnés dans Général.",
@@ -281,6 +295,7 @@
       "newConfiguration": "Nouvelle configuration de modèle",
       "newConfigurationHelp": "Enregistrez un fournisseur et un modèle comme option en un clic.",
       "configurationName": "Nom",
+      "configurationNameHelp": "Renommez cette configuration de modèle enregistrée.",
       "configurationNamePlaceholder": "Rédaction rapide"
     },
     "timezone": {
@@ -388,6 +403,19 @@
       "featured": "En vedette",
       "loading": "Chargement des apps...",
       "empty": "Aucune app ne correspond à ce filtre."
+    },
+    "oauth": {
+      "authentication": "OAuth authentication",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signInAgain": "Sign in again",
+      "signOut": "Sign out",
+      "signedInAs": "Signed in as {{account}}",
+      "signInHelp": "Sign in from this device; no API key is stored in config.",
+      "signInRequired": "Sign in required",
+      "signInBeforeSaving": "Sign in before saving this OAuth provider as the active model provider.",
+      "signedIn": "Signed in",
+      "notSignedIn": "Not signed in"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "Chargement de la conversation…",
     "empty": {
-      "greeting": "Que puis-je faire pour vous ?",
+      "greetings": {
+        "workOn": "Sur quoi travaillons-nous ensemble ?",
+        "start": "Par où commence-t-on ?",
+        "build": "Que construisons-nous aujourd'hui ?",
+        "tackle": "Que résout-on ensemble ?"
+      },
       "quickActions": {
         "plan": {
           "title": "Créer un plan de projet",
@@ -707,7 +740,8 @@
       "manual": "Coller un chemin",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine."
+      "absolutePathRequired": "Enter an absolute folder path on this machine.",
+      "chooseFolder": "Choisir un dossier..."
     }
   }
 }

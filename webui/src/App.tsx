@@ -23,7 +23,12 @@ import {
 import { deriveTitle } from "@/lib/format";
 import { NanobotClient } from "@/lib/nanobot-client";
 import { ClientProvider, useClient } from "@/providers/ClientProvider";
-import type { ChatSummary, WorkspaceScopePayload, WorkspacesPayload } from "@/lib/types";
+import type {
+  ChatSummary,
+  SettingsPayload,
+  WorkspaceScopePayload,
+  WorkspacesPayload,
+} from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { fetchWorkspaces } from "@/lib/api";
@@ -367,6 +372,7 @@ function Shell({
   const [runningChatIds, setRunningChatIds] = useState<Set<string>>(() => new Set());
   const [completedChatIds, setCompletedChatIds] = useState<Set<string>>(readCompletedRunChatIds);
   const [workspaces, setWorkspaces] = useState<WorkspacesPayload | null>(null);
+  const [settingsSnapshot, setSettingsSnapshot] = useState<SettingsPayload | null>(null);
   const [workspaceError, setWorkspaceError] = useState<string | null>(null);
   const [draftWorkspaceScope, setDraftWorkspaceScope] =
     useState<WorkspaceScopePayload | null>(null);
@@ -1029,6 +1035,7 @@ function Shell({
               workspaceScopeDisabled={activeChatRunning}
               workspaceError={workspaceError}
               onWorkspaceScopeChange={applyWorkspaceScope}
+              settingsSnapshot={settingsSnapshot}
             />
           </div>
           {view !== "chat" && (
@@ -1040,6 +1047,7 @@ function Shell({
                 onToggleTheme={toggle}
                 onBackToChat={onBackToChat}
                 onModelNameChange={onModelNameChange}
+                onSettingsChange={setSettingsSnapshot}
                 onLogout={onLogout}
                 onRestart={onRestart}
                 isRestarting={isRestarting}

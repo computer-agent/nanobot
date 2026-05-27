@@ -25,7 +25,9 @@
       "section": "系统",
       "restartHint": "重启 nanobot 以应用运行时更改。",
       "restart": "重启 nanobot",
-      "restarting": "正在重启..."
+      "restarting": "正在重启...",
+      "restartEngine": "重启引擎",
+      "restartingEngine": "正在重启引擎..."
     },
     "restart": {
       "completed": "重启已完成，用时 {{seconds}} 秒。"
@@ -92,7 +94,8 @@
       "safety": "安全",
       "capabilities": "能力",
       "integrations": "集成",
-      "apps": "应用"
+      "apps": "应用",
+      "desktop": "桌面端"
     },
     "models": {
       "selectModel": "选择模型",
@@ -100,6 +103,7 @@
       "newConfiguration": "新建模型配置",
       "newConfigurationHelp": "把服务商和模型保存为一个可直接切换的选项。",
       "configurationName": "名称",
+      "configurationNameHelp": "重命名这个已保存的模型配置。",
       "configurationNamePlaceholder": "快速写作"
     },
     "rows": {
@@ -149,7 +153,10 @@
       "pathAppend": "PATH 追加",
       "cliAppsCatalog": "目录",
       "cliAppsFilter": "筛选",
-      "configurationDocs": "配置文档"
+      "configurationDocs": "配置文档",
+      "engine": "引擎",
+      "logs": "日志",
+      "diagnostics": "诊断"
     },
     "help": {
       "theme": "在浅色和深色外观之间切换。",
@@ -182,7 +189,9 @@
       "toolHintMaxLength": "工具进度提示显示的最大字符数。",
       "cliAppsCatalog": "只安装 nanobot 在本机调用应用时需要的 CLI 适配层，不触碰应用本体。",
       "cliAppsFilter": "按应用、分类或能力搜索。",
-      "advancedReadOnly": "高级安全控制在 WebUI 中只读；需要时请谨慎编辑 config.json。"
+      "advancedReadOnly": "高级安全控制在 WebUI 中只读；需要时请谨慎编辑 config.json。",
+      "logs": "打开桌面端引擎日志文件夹。",
+      "diagnostics": "导出一份用于支持排查的运行时报告。"
     },
     "timezone": {
       "select": "选择时区",
@@ -290,7 +299,9 @@
       "on": "开",
       "off": "关",
       "configured": "已配置",
-      "notConfigured": "未配置"
+      "notConfigured": "未配置",
+      "pending": "待应用",
+      "restartingEngine": "正在重启"
     },
     "status": {
       "loading": "正在加载设置...",
@@ -300,14 +311,18 @@
       "savedRestart": "已保存。重启 nanobot 后生效。",
       "restartAfterSaving": "保存后，可在合适时重启。",
       "savedRestartApply": "已保存，可稍后重启。",
-      "imageProviderRestart": "图片服务商改动已保存，可稍后重启。"
+      "imageProviderRestart": "图片服务商改动已保存，可稍后重启。",
+      "desktopRestartAfterSaving": "保存后，nanobot 会自动重启引擎。",
+      "desktopRestartPending": "已保存，将在合适时重启引擎。"
     },
     "actions": {
       "save": "保存",
       "saving": "保存中",
       "edit": "编辑",
       "cancel": "取消",
-      "openDocs": "打开文档"
+      "openDocs": "打开文档",
+      "open": "打开",
+      "export": "导出"
     },
     "byok": {
       "description": "自带服务商密钥。Nanobot 会从当前 config 读取这些值，只有已配置的服务商才能在通用设置里选择。",
@@ -388,6 +403,19 @@
       "featured": "精选",
       "loading": "正在加载应用...",
       "empty": "没有符合筛选条件的应用。"
+    },
+    "oauth": {
+      "authentication": "OAuth 认证",
+      "signIn": "登录",
+      "signingIn": "正在登录…",
+      "signInAgain": "重新登录",
+      "signOut": "退出登录",
+      "signedInAs": "已登录为 {{account}}",
+      "signInHelp": "在这台设备上登录；不会把 API key 写入配置。",
+      "signInRequired": "需要登录",
+      "signInBeforeSaving": "先登录这个 OAuth 提供商，然后再保存为当前模型提供商。",
+      "signedIn": "已登录",
+      "notSignedIn": "未登录"
     }
   },
   "chat": {
@@ -446,7 +474,12 @@
   "thread": {
     "loadingConversation": "正在加载对话…",
     "empty": {
-      "greeting": "我可以帮你做什么？",
+      "greetings": {
+        "workOn": "我们要一起做点什么？",
+        "start": "今天从哪里开始？",
+        "build": "今天一起构建什么？",
+        "tackle": "我们要一起解决什么？"
+      },
       "quickActions": {
         "plan": {
           "title": "创建项目计划",
@@ -707,7 +740,8 @@
       "manual": "粘贴路径",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "使用路径",
-      "absolutePathRequired": "请输入这台机器上的绝对文件夹路径。"
+      "absolutePathRequired": "请输入这台机器上的绝对文件夹路径。",
+      "chooseFolder": "选择文件夹..."
     }
   }
 }
