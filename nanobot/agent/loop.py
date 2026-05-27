@@ -32,7 +32,6 @@ from nanobot.security.workspace_access import (
     WorkspaceScopeResolver,
     bind_workspace_scope,
     reset_workspace_scope,
-    workspace_sandbox_status,
 )
 from nanobot.bus.events import InboundMessage, OutboundMessage
 from nanobot.bus.queue import MessageBus
@@ -250,10 +249,6 @@ class AgentLoop:
         self.workspace_scopes = WorkspaceScopeResolver(
             default_workspace=workspace,
             default_restrict_to_workspace=restrict_to_workspace,
-        )
-        self.workspace_sandbox = workspace_sandbox_status(
-            restrict_to_workspace=restrict_to_workspace,
-            workspace=workspace,
         )
         self._start_time = time.time()
         self._last_usage: dict[str, int] = {}
@@ -484,7 +479,7 @@ class AgentLoop:
             provider_snapshot_loader=self._provider_snapshot_loader,
             image_generation_provider_configs=self._image_generation_provider_configs,
             timezone=self.context.timezone or "UTC",
-            workspace_sandbox=self.workspace_sandbox,
+            workspace_sandbox=self.workspace_scopes.sandbox_status,
         )
         loader = ToolLoader()
         registered = loader.load(ctx, self.tools)

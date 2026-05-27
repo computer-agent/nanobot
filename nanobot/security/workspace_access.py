@@ -98,6 +98,10 @@ class WorkspaceScopeResolver:
     default_restrict_to_workspace: bool
     scoped_channel: str = "websocket"
 
+    @property
+    def sandbox_status(self) -> WorkspaceSandboxStatus:
+        return self.default().sandbox_status
+
     def default(self) -> WorkspaceScope:
         return default_workspace_scope(
             self.default_workspace,
