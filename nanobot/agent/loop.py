@@ -1292,16 +1292,26 @@ class AgentLoop:
 
         # Build changelog from tool events
         changelog: list[str] = []
+        complete_goal_recap: str | None = None
         if result and result.tool_events:
             for event in result.tool_events:
-                if event.get("status") == "ok":
-                    changelog.append(f"{event['name']}: {event['detail']}")
+                if event.get("status") != "ok":
+                    continue
+                name = event.get("name", "")
+                detail = event.get("detail", "")
+                if name == "complete_goal":
+                    complete_goal_recap = detail
+                else:
+                    changelog.append(f"{name}: {detail}")
 
         success = result is not None and result.stop_reason == "completed"
         if success:
             new_cursor = entries[-1]["cursor"]
             self.dream.store.set_last_dream_cursor(new_cursor)
-            session.metadata.setdefault("_dream_changelog", []).extend(changelog)
+            meta = session.metadata
+            meta.setdefault("_dream_changelog", []).extend(changelog)
+            if complete_goal_recap:
+                meta["_dream_recap"] = complete_goal_recap
             self.sessions.save(session)
             logger.info(
                 "Dream done: {} change(s), cursor advanced to {}",
@@ -1331,11 +1341,13 @@ class AgentLoop:
         with suppress(OSError):
             batch_file.unlink(missing_ok=True)
         changelog = session.metadata.pop("_dream_changelog", [])
+        recap = session.metadata.pop("_dream_recap", None)
         sha = None
-        if changelog and self.dream.store.git.is_initialized():
+        if (changelog or recap) and self.dream.store.git.is_initialized():
             ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+            body = recap if recap else "\n".join(changelog)
             summary = f"dream: {ts}, {len(changelog)} change(s)"
-            commit_msg = f"{summary}\n\n" + "\n".join(changelog)
+            commit_msg = f"{summary}\n\n{body}"
             sha = self.dream.store.git.auto_commit(commit_msg)
             if sha:
                 logger.info("Dream commit: {}", sha)
