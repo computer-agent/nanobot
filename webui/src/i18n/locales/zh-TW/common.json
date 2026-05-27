@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "側邊欄導覽",
-    "globalActions": "全域操作",
     "collapse": "收合側邊欄",
-    "toggleTheme": "切換主題",
-    "home": "首頁",
     "newChat": "新增對話",
     "searchAria": "搜尋",
-    "viewOptions": "檢視",
-    "compactList": "緊湊列表",
-    "showPreviews": "顯示預覽",
-    "showTimestamps": "顯示時間",
-    "sortLabel": "排序",
-    "sortUpdated": "最近更新",
-    "sortCreated": "最近建立",
-    "sortTitle": "標題 A-Z",
     "searchPlaceholder": "搜尋",
     "searchResults": "搜尋結果",
     "noSearchResults": "沒有符合的對話。",
     "recent": "最近對話",
-    "refreshSessions": "重新整理會話",
     "settings": "設定",
     "language": {
       "label": "語言",
       "ariaLabel": "切換語言"
     },
-    "apps": "應用",
-    "project": {
-      "change": "更改專案工作區"
-    }
+    "apps": "應用"
   },
   "settings": {
     "backToChat": "返回對話",
@@ -410,7 +395,6 @@
     "loading": "載入中…",
     "noSessions": "目前還沒有會話。",
     "showMore": "再顯示 {{count}} 個",
-    "showAll": "顯示全部",
     "collapsed": "已折疊 {{count}} 個對話",
     "showLess": "收起",
     "actions": "「{{title}}」的會話操作",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "工作區存取權限",
-        "accessLabel": "工作區權限",
         "projectAria": "選擇專案",
         "projectPlaceholder": "選擇專案",
         "default": "預設權限",
-        "restricted": "受限",
-        "restrictedDescription": "只允許讀取和編輯所選專案目錄。",
-        "full": "完全存取權限",
-        "fullDescription": "允許存取專案目錄之外的路徑。"
+        "full": "完全存取權限"
       }
     },
     "scrollToBottom": "捲動到底部",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "專案",
-      "description": "為這個對話選擇一個專案目錄。",
-      "projects": "專案",
       "defaultProject": "預設工作區",
-      "access": "存取權限",
       "manual": "貼上路徑",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "使用路徑",
-      "absolutePathRequired": "請輸入這台機器上的絕對資料夾路徑。",
-      "done": "完成"
+      "absolutePathRequired": "請輸入這台機器上的絕對資料夾路徑。"
     }
   }
 }

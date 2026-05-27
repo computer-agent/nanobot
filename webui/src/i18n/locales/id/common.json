@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "Navigasi bilah samping",
-    "globalActions": "Aksi global",
     "collapse": "Ciutkan sidebar",
-    "toggleTheme": "Ganti tema",
-    "home": "Beranda",
     "newChat": "Obrolan baru",
     "searchAria": "Cari",
-    "viewOptions": "View",
-    "compactList": "Compact list",
-    "showPreviews": "Show previews",
-    "showTimestamps": "Show time",
-    "sortLabel": "Sort",
-    "sortUpdated": "Recently updated",
-    "sortCreated": "Recently created",
-    "sortTitle": "Title A-Z",
     "searchPlaceholder": "Cari",
     "searchResults": "Hasil",
     "noSearchResults": "Tidak ada chat yang cocok.",
     "recent": "Terbaru",
-    "refreshSessions": "Segarkan sesi",
     "settings": "Pengaturan",
     "language": {
       "label": "Bahasa",
       "ariaLabel": "Ganti bahasa"
     },
-    "apps": "Aplikasi",
-    "project": {
-      "change": "Change project workspace"
-    }
+    "apps": "Aplikasi"
   },
   "settings": {
     "backToChat": "Kembali ke obrolan",
@@ -410,7 +395,6 @@
     "loading": "Memuat…",
     "noSessions": "Belum ada sesi.",
     "showMore": "Tampilkan {{count}} lagi",
-    "showAll": "Tampilkan semua",
     "collapsed": "{{count}} obrolan diciutkan",
     "showLess": "Tampilkan lebih sedikit",
     "actions": "Aksi obrolan untuk {{title}}",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "Workspace access mode",
-        "accessLabel": "Workspace access",
         "projectAria": "Pilih proyek",
         "projectPlaceholder": "Pilih proyek",
         "default": "Default Permission",
-        "restricted": "Restricted",
-        "restrictedDescription": "Read and edit inside the selected project only.",
-        "full": "Full Access",
-        "fullDescription": "Allow access outside the project folder."
+        "full": "Full Access"
       }
     },
     "scrollToBottom": "Gulir ke bawah",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "Proyek",
-      "description": "Pilih folder untuk chat ini.",
-      "projects": "Projects",
       "defaultProject": "Default workspace",
-      "access": "Access",
       "manual": "Tempel path",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine.",
-      "done": "Done"
+      "absolutePathRequired": "Enter an absolute folder path on this machine."
     }
   }
 }

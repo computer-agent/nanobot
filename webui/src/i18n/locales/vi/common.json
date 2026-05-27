@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "Điều hướng thanh bên",
-    "globalActions": "Hành động toàn cục",
     "collapse": "Thu gọn thanh bên",
-    "toggleTheme": "Chuyển giao diện",
-    "home": "Trang chủ",
     "newChat": "Cuộc trò chuyện mới",
     "searchAria": "Tìm kiếm",
-    "viewOptions": "View",
-    "compactList": "Compact list",
-    "showPreviews": "Show previews",
-    "showTimestamps": "Show time",
-    "sortLabel": "Sort",
-    "sortUpdated": "Recently updated",
-    "sortCreated": "Recently created",
-    "sortTitle": "Title A-Z",
     "searchPlaceholder": "Tìm kiếm",
     "searchResults": "Kết quả",
     "noSearchResults": "Không có cuộc trò chuyện phù hợp.",
     "recent": "Gần đây",
-    "refreshSessions": "Làm mới phiên",
     "settings": "Cài đặt",
     "language": {
       "label": "Ngôn ngữ",
       "ariaLabel": "Đổi ngôn ngữ"
     },
-    "apps": "Ứng dụng",
-    "project": {
-      "change": "Change project workspace"
-    }
+    "apps": "Ứng dụng"
   },
   "settings": {
     "backToChat": "Quay lại trò chuyện",
@@ -410,7 +395,6 @@
     "loading": "Đang tải…",
     "noSessions": "Chưa có phiên nào.",
     "showMore": "Hiển thị thêm {{count}}",
-    "showAll": "Hiển thị tất cả",
     "collapsed": "Đã thu gọn {{count}} cuộc trò chuyện",
     "showLess": "Thu gọn",
     "actions": "Tác vụ cho cuộc trò chuyện {{title}}",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "Workspace access mode",
-        "accessLabel": "Workspace access",
         "projectAria": "Chọn dự án",
         "projectPlaceholder": "Chọn dự án",
         "default": "Default Permission",
-        "restricted": "Restricted",
-        "restrictedDescription": "Read and edit inside the selected project only.",
-        "full": "Full Access",
-        "fullDescription": "Allow access outside the project folder."
+        "full": "Full Access"
       }
     },
     "scrollToBottom": "Cuộn xuống cuối",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "Dự án",
-      "description": "Chọn một thư mục cho cuộc trò chuyện này.",
-      "projects": "Projects",
       "defaultProject": "Default workspace",
-      "access": "Access",
       "manual": "Dán đường dẫn",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine.",
-      "done": "Done"
+      "absolutePathRequired": "Enter an absolute folder path on this machine."
     }
   }
 }

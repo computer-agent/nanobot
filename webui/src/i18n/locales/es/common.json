@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "Navegación de la barra lateral",
-    "globalActions": "Acciones globales",
     "collapse": "Contraer barra lateral",
-    "toggleTheme": "Cambiar tema",
-    "home": "Inicio",
     "newChat": "Nuevo chat",
     "searchAria": "Buscar",
-    "viewOptions": "View",
-    "compactList": "Compact list",
-    "showPreviews": "Show previews",
-    "showTimestamps": "Show time",
-    "sortLabel": "Sort",
-    "sortUpdated": "Recently updated",
-    "sortCreated": "Recently created",
-    "sortTitle": "Title A-Z",
     "searchPlaceholder": "Buscar",
     "searchResults": "Resultados",
     "noSearchResults": "No hay chats coincidentes.",
     "recent": "Recientes",
-    "refreshSessions": "Actualizar sesiones",
     "settings": "Configuración",
     "language": {
       "label": "Idioma",
       "ariaLabel": "Cambiar idioma"
     },
-    "apps": "Apps",
-    "project": {
-      "change": "Change project workspace"
-    }
+    "apps": "Apps"
   },
   "settings": {
     "backToChat": "Volver al chat",
@@ -410,7 +395,6 @@
     "loading": "Cargando…",
     "noSessions": "Todavía no hay sesiones.",
     "showMore": "Mostrar {{count}} más",
-    "showAll": "Mostrar todo",
     "collapsed": "{{count}} chats ocultos",
     "showLess": "Mostrar menos",
     "actions": "Acciones del chat {{title}}",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "Workspace access mode",
-        "accessLabel": "Workspace access",
         "projectAria": "Elegir proyecto",
         "projectPlaceholder": "Seleccionar proyecto",
         "default": "Default Permission",
-        "restricted": "Restricted",
-        "restrictedDescription": "Read and edit inside the selected project only.",
-        "full": "Full Access",
-        "fullDescription": "Allow access outside the project folder."
+        "full": "Full Access"
       }
     },
     "scrollToBottom": "Desplazarse al final",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "Proyecto",
-      "description": "Elige una carpeta para este chat.",
-      "projects": "Projects",
       "defaultProject": "Default workspace",
-      "access": "Access",
       "manual": "Pegar ruta",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine.",
-      "done": "Done"
+      "absolutePathRequired": "Enter an absolute folder path on this machine."
     }
   }
 }

@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "Navigation de la barre latérale",
-    "globalActions": "Actions globales",
     "collapse": "Réduire la barre latérale",
-    "toggleTheme": "Changer de thème",
-    "home": "Accueil",
     "newChat": "Nouvelle discussion",
     "searchAria": "Rechercher",
-    "viewOptions": "View",
-    "compactList": "Compact list",
-    "showPreviews": "Show previews",
-    "showTimestamps": "Show time",
-    "sortLabel": "Sort",
-    "sortUpdated": "Recently updated",
-    "sortCreated": "Recently created",
-    "sortTitle": "Title A-Z",
     "searchPlaceholder": "Rechercher",
     "searchResults": "Résultats",
     "noSearchResults": "Aucun chat correspondant.",
     "recent": "Récentes",
-    "refreshSessions": "Actualiser les sessions",
     "settings": "Paramètres",
     "language": {
       "label": "Langue",
       "ariaLabel": "Changer de langue"
     },
-    "apps": "Apps",
-    "project": {
-      "change": "Change project workspace"
-    }
+    "apps": "Apps"
   },
   "settings": {
     "backToChat": "Retour à la discussion",
@@ -410,7 +395,6 @@
     "loading": "Chargement…",
     "noSessions": "Aucune session pour le moment.",
     "showMore": "Afficher {{count}} de plus",
-    "showAll": "Tout afficher",
     "collapsed": "{{count}} discussions masquées",
     "showLess": "Afficher moins",
     "actions": "Actions de la discussion {{title}}",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "Workspace access mode",
-        "accessLabel": "Workspace access",
         "projectAria": "Choisir un projet",
         "projectPlaceholder": "Sélectionner un projet",
         "default": "Default Permission",
-        "restricted": "Restricted",
-        "restrictedDescription": "Read and edit inside the selected project only.",
-        "full": "Full Access",
-        "fullDescription": "Allow access outside the project folder."
+        "full": "Full Access"
       }
     },
     "scrollToBottom": "Faire défiler vers le bas",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "Projet",
-      "description": "Choisissez un dossier pour cette conversation.",
-      "projects": "Projects",
       "defaultProject": "Default workspace",
-      "access": "Access",
       "manual": "Coller un chemin",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine.",
-      "done": "Done"
+      "absolutePathRequired": "Enter an absolute folder path on this machine."
     }
   }
 }

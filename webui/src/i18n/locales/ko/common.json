@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "사이드바 탐색",
-    "globalActions": "전역 작업",
     "collapse": "사이드바 접기",
-    "toggleTheme": "테마 전환",
-    "home": "홈",
     "newChat": "새 채팅",
     "searchAria": "검색",
-    "viewOptions": "View",
-    "compactList": "Compact list",
-    "showPreviews": "Show previews",
-    "showTimestamps": "Show time",
-    "sortLabel": "Sort",
-    "sortUpdated": "Recently updated",
-    "sortCreated": "Recently created",
-    "sortTitle": "Title A-Z",
     "searchPlaceholder": "검색",
     "searchResults": "결과",
     "noSearchResults": "일치하는 채팅이 없습니다.",
     "recent": "최근 대화",
-    "refreshSessions": "세션 새로고침",
     "settings": "설정",
     "language": {
       "label": "언어",
       "ariaLabel": "언어 변경"
     },
-    "apps": "앱",
-    "project": {
-      "change": "Change project workspace"
-    }
+    "apps": "앱"
   },
   "settings": {
     "backToChat": "채팅으로 돌아가기",
@@ -410,7 +395,6 @@
     "loading": "불러오는 중…",
     "noSessions": "아직 세션이 없습니다.",
     "showMore": "{{count}}개 더 보기",
-    "showAll": "모두 보기",
     "collapsed": "{{count}}개 채팅 접힘",
     "showLess": "접기",
     "actions": "{{title}} 채팅 작업",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "Workspace access mode",
-        "accessLabel": "Workspace access",
         "projectAria": "프로젝트 선택",
         "projectPlaceholder": "프로젝트 선택",
         "default": "Default Permission",
-        "restricted": "Restricted",
-        "restrictedDescription": "Read and edit inside the selected project only.",
-        "full": "Full Access",
-        "fullDescription": "Allow access outside the project folder."
+        "full": "Full Access"
       }
     },
     "scrollToBottom": "맨 아래로 스크롤",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "프로젝트",
-      "description": "이 채팅에서 사용할 폴더를 선택합니다.",
-      "projects": "Projects",
       "defaultProject": "Default workspace",
-      "access": "Access",
       "manual": "경로 붙여넣기",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine.",
-      "done": "Done"
+      "absolutePathRequired": "Enter an absolute folder path on this machine."
     }
   }
 }

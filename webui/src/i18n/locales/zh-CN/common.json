@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "侧边栏导航",
-    "globalActions": "全局操作",
     "collapse": "收起侧边栏",
-    "toggleTheme": "切换主题",
-    "home": "首页",
     "newChat": "新建对话",
     "searchAria": "搜索",
-    "viewOptions": "视图",
-    "compactList": "紧凑列表",
-    "showPreviews": "显示预览",
-    "showTimestamps": "显示时间",
-    "sortLabel": "排序",
-    "sortUpdated": "最近更新",
-    "sortCreated": "最近创建",
-    "sortTitle": "标题 A-Z",
     "searchPlaceholder": "搜索",
     "searchResults": "搜索结果",
     "noSearchResults": "没有匹配的会话。",
     "recent": "最近对话",
-    "refreshSessions": "刷新会话",
     "settings": "设置",
     "language": {
       "label": "语言",
       "ariaLabel": "切换语言"
     },
-    "apps": "应用",
-    "project": {
-      "change": "更改项目工作区"
-    }
+    "apps": "应用"
   },
   "settings": {
     "backToChat": "返回对话",
@@ -410,7 +395,6 @@
     "loading": "加载中…",
     "noSessions": "还没有会话。",
     "showMore": "再显示 {{count}} 个",
-    "showAll": "显示全部",
     "collapsed": "已折叠 {{count}} 个对话",
     "showLess": "收起",
     "actions": "“{{title}}” 的会话操作",
@@ -649,14 +633,10 @@
       "goalStateCloseAria": "关闭目标",
       "workspace": {
         "accessAria": "工作区访问权限",
-        "accessLabel": "工作区权限",
         "projectAria": "选择项目",
         "projectPlaceholder": "选择项目",
         "default": "默认权限",
-        "restricted": "受限",
-        "restrictedDescription": "只允许读取和编辑所选项目目录。",
-        "full": "完全访问权限",
-        "fullDescription": "允许访问项目目录之外的路径。"
+        "full": "完全访问权限"
       }
     },
     "scrollToBottom": "滚动到底部",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "项目",
-      "description": "为这个对话选择一个项目目录。",
-      "projects": "项目",
       "defaultProject": "默认工作区",
-      "access": "访问权限",
       "manual": "粘贴路径",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "使用路径",
-      "absolutePathRequired": "请输入这台机器上的绝对文件夹路径。",
-      "done": "完成"
+      "absolutePathRequired": "请输入这台机器上的绝对文件夹路径。"
     }
   }
 }

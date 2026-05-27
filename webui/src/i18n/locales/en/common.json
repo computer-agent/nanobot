@@ -40,34 +40,19 @@
   },
   "sidebar": {
     "navigation": "Sidebar navigation",
-    "globalActions": "Global actions",
     "collapse": "Collapse sidebar",
-    "toggleTheme": "Toggle theme",
-    "home": "Home",
     "newChat": "New chat",
     "searchAria": "Search",
-    "viewOptions": "View",
-    "compactList": "Compact list",
-    "showPreviews": "Show previews",
-    "showTimestamps": "Show time",
-    "sortLabel": "Sort",
-    "sortUpdated": "Recently updated",
-    "sortCreated": "Recently created",
-    "sortTitle": "Title A-Z",
     "searchPlaceholder": "Search",
     "searchResults": "Results",
     "noSearchResults": "No matching chats.",
     "recent": "Recent",
-    "refreshSessions": "Refresh sessions",
     "settings": "Settings",
     "language": {
       "label": "Language",
       "ariaLabel": "Change language"
     },
-    "apps": "Apps",
-    "project": {
-      "change": "Change project workspace"
-    }
+    "apps": "Apps"
   },
   "settings": {
     "backToChat": "Back to chat",
@@ -410,7 +395,6 @@
     "loading": "Loading…",
     "noSessions": "No sessions yet.",
     "showMore": "Show {{count}} more",
-    "showAll": "Show all",
     "collapsed": "{{count}} hidden chats",
     "showLess": "Show less",
     "actions": "Chat actions for {{title}}",
@@ -649,14 +633,10 @@
       },
       "workspace": {
         "accessAria": "Workspace access mode",
-        "accessLabel": "Workspace access",
         "projectAria": "Choose project",
         "projectPlaceholder": "Select project",
         "default": "Default Permission",
-        "restricted": "Restricted",
-        "restrictedDescription": "Read and edit inside the selected project only.",
-        "full": "Full Access",
-        "fullDescription": "Allow access outside the project folder."
+        "full": "Full Access"
       }
     },
     "scrollToBottom": "Scroll to bottom",
@@ -723,16 +703,11 @@
   },
   "workspace": {
     "dialog": {
-      "title": "Project",
-      "description": "Choose a folder for this chat.",
-      "projects": "Projects",
       "defaultProject": "Default workspace",
-      "access": "Access",
       "manual": "Paste path",
       "manualPlaceholder": "/Users/name/project",
       "usePath": "Use Path",
-      "absolutePathRequired": "Enter an absolute folder path on this machine.",
-      "done": "Done"
+      "absolutePathRequired": "Enter an absolute folder path on this machine."
     }
   }
 }
